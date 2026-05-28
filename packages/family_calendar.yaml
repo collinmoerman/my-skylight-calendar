@@ -41,7 +41,7 @@ input_select:
       - Week
       - Biweek
       - Month
-    initial: Week
+    initial: Month
 
 input_datetime:
   calendar_event_start:

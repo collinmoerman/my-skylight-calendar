@@ -14,7 +14,7 @@ views:
               margin: 0
               padding: 0
               card_margin: 0 6px 0 6px
-              grid-template-columns: minmax(170px, 15fr) minmax(260px, 27fr) minmax(520px, 78fr)
+              grid-template-columns: minmax(180px, 16fr) minmax(270px, 28fr) minmax(500px, 76fr)
               grid-template-areas: '"time current forecast"'
               grid-template-rows: auto
               mediaquery:
@@ -188,12 +188,8 @@ views:
                   }
             grid_options:
               columns: 120
-              rows: 5
-        column_span: 10
-      # --- End HEADER SECTION (Date & Weather) ---  
-      # --- START CONTROLS SECTION (Buttons) ---
-      - type: grid
-        cards:
+              rows: auto
+          # --- START CONTROLS SECTION (Buttons) ---
           - type: horizontal-stack
             cards:
               - type: custom:bubble-card
@@ -206,7 +202,14 @@ views:
                 tap_action:
                   action: perform-action
                   perform_action: script.show_family_calendar_panel
+                button_action:
+                  tap_action:
+                    action: perform-action
+                    perform_action: script.show_family_calendar_panel
                 styles: |
+                  * { font-size: 1.18em !important; }
+                  .bubble-icon { --mdc-icon-size: 34px !important; }
+                  ha-card, .bubble-button-card-container { cursor: pointer !important; }
                   .bubble-button-background {
                     opacity: 1 !important;
                     background-color: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Calendar' ? 'var(--family-default-primary-color)' : 'rgba(255, 255, 255, 0.6)'} !important;
@@ -225,7 +228,14 @@ views:
                 tap_action:
                   action: perform-action
                   perform_action: script.show_family_lists_panel
+                button_action:
+                  tap_action:
+                    action: perform-action
+                    perform_action: script.show_family_lists_panel
                 styles: |
+                  * { font-size: 1.18em !important; }
+                  .bubble-icon { --mdc-icon-size: 34px !important; }
+                  ha-card, .bubble-button-card-container { cursor: pointer !important; }
                   .bubble-button-background {
                     opacity: 1 !important;
                     background-color: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Lists' ? 'var(--family-default-primary-color)' : 'rgba(255, 255, 255, 0.6)'} !important;
@@ -247,7 +257,12 @@ views:
             tap_action:
               action: perform-action
               perform_action: script.family_calendar_visible_filter
+            button_action:
+              tap_action:
+                action: perform-action
+                perform_action: script.family_calendar_visible_filter
             styles: |
+              ha-card, .bubble-button-card-container { cursor: pointer !important; }
               .bubble-button-background {
                 opacity: 1 !important;
                 background-color: ${hass.states['input_text.family_calendar_filter'].state === '.*' ? 'light-grey' : 'var(--family-default-primary-color)'} !important;
@@ -265,7 +280,12 @@ views:
             tap_action:
               action: perform-action
               perform_action: script.benchapp_calendar_visible_filter
+            button_action:
+              tap_action:
+                action: perform-action
+                perform_action: script.benchapp_calendar_visible_filter
             styles: |
+              ha-card, .bubble-button-card-container { cursor: pointer !important; }
               .bubble-button-background {
                 opacity: 1 !important;
                 background-color: ${hass.states['input_text.benchapp_calendar_filter'].state === '.*' ? 'light-grey' : 'var(--benchapp-default-primary-color)'} !important;
@@ -282,7 +302,12 @@ views:
             tap_action:
               action: navigate
               navigation_path: "#addcalendarevent"
+            button_action:
+              tap_action:
+                action: navigate
+                navigation_path: "#addcalendarevent"
             styles: |
+              ha-card, .bubble-button-card-container { cursor: pointer !important; }
               * { font-size: 1.05em !important; }
               ha-card { --bubble-main-background-color: #393745 !important; }
               .bubble-icon { --mdc-icon-size: 30px !important; color: snow !important; opacity: 1; }
@@ -303,7 +328,7 @@ views:
               columns: 10
               rows: 1
         column_span: 10
-      # --- End CONTROLS SECTION (Buttons) ---        
+      # --- End HEADER/CONTROLS SECTION ---        
       # --- START CALENDAR SECTION (Week Planner Card) ---
       - type: grid
         cards:
@@ -357,13 +382,9 @@ views:
                 hideWeekend: false
                 noCardBackground: false
                 compact: false
-                weather:
-                  showCondition: true
-                  showTemperature: true
-                  showLowTemperature: true
-                  useTwiceDaily: true
-                  entity: weather.nws_weather_karb
                 locale: en
+                texts:
+                  noEvents: ""
                 showLocation: true
                 hidePastEvents: false
                 hideDaysWithoutEvents: false
