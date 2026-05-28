@@ -48,7 +48,7 @@ I realized most offered similar functionality but differed significantly in pric
 Choosing the DIY route with Home Assistant provided several benefits over buying a Skylight/Hearth display:
 
 * **No Monthly Fees:** Avoids subscriptions for "premium" features.
-* **Seamless Integration:** It talks to our lights, chores (Grocy), and presence sensors.
+* **Seamless Integration:** It talks to our lights, meals (OurGroceries), and presence sensors.
 * **Old Hardware:** Repurposed a Mini PC and a standard monitor.
 * **Privacy:** No vendor lock-in or risk of the company shutting down.
 
@@ -76,6 +76,16 @@ The hardware I originally used I chose based on what I mentioned above plus with
 ---
 
 ## ⚙️ Installation Guide
+
+### Moerman fork notes
+
+This fork is tailored for `collinmoerman`'s Home Assistant instance.
+
+* The original chores concept has been replaced with a native Home Assistant **Meals** panel.
+* Meals are rendered from the OurGroceries to-do entity `todo.meals`.
+* The deployed dashboard uses built-in Home Assistant cards only: calendar, weather forecast, markdown, heading, and to-do list. This avoids requiring HACS/custom frontend card installs on Home Assistant Core.
+* The calendar entities are pre-mapped to `calendar.family`, `calendar.collin_moerman_gmail_com`, `calendar.birthdays`, `calendar.benchapp`, and `calendar.working_location`.
+* The weather entity is pre-mapped to `weather.nws_weather_karb`.
 
 *Note: This setup uses a **YAML Package** to automatically create all the necessary helpers, scripts, and variables for you. You do not need to create them manually.*
 
