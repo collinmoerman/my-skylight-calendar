@@ -82,7 +82,7 @@ The hardware I originally used I chose based on what I mentioned above plus with
 This fork keeps the upstream HACS/custom-card dashboard structure and applies only Moerman-specific mappings.
 
 * Calendars are limited to `calendar.family` and `calendar.benchapp`.
-* The original chores concept is represented by a **Meals** section backed by OurGroceries `todo.meals`.
+* The original chores concept is represented by a **Lists** tab with OurGroceries `todo.meals` and `todo.meijer` cards.
 * Weather is mapped to `weather.nws_weather_karb`.
 
 *Note: This setup uses a **YAML Package** to automatically create all the necessary helpers, scripts, and variables for you. You do not need to create them manually.*

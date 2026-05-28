@@ -1,7 +1,7 @@
 views:
   - type: sections
     max_columns: 10
-    title: Family Calendar
+    title: Calendar
     path: family-calendar
     theme: Skylight
     sections:
@@ -21,11 +21,11 @@ views:
                 templateRaw: |
                   {{moment format=LLLL dd, yyyy}}              
               - parentStyle: |
-                  font-size:4em;  text-align:center; font-weight:400;
+                  font-size:3.2em;  text-align:center; font-weight:400;
                 templateRaw: |
                   {{moment format=HH:mm}} 
             grid_options:
-              columns: 20
+              columns: 14
             card_mod:
               style: |
                 ha-card {
@@ -39,16 +39,17 @@ views:
             details: true
             forecast: false
             grid_options:
-              columns: 20
+              columns: 26
               rows: 3
           - type: weather-forecast
             show_current: false
             show_forecast: true
             entity: weather.nws_weather_karb
             forecast_type: daily
+            forecast_slots: 7
             name: Weather Forecast
             grid_options:
-              columns: 20
+              columns: 80
               rows: 3
             card_mod:
               style: |
@@ -441,24 +442,6 @@ views:
               showDescription: false
         column_span: 10
       # --- End CALENDAR SECTION (Week Planner Card) ---
-      # --- START MEALS SECTION (OurGroceries) ---
-      - type: grid
-        cards:
-          - type: todo-list
-            title: Meals
-            entity: todo.meals
-            hide_completed: true
-            hide_section_headers: true
-            item_tap_action: edit
-            card_mod:
-              style: |
-                ha-card {
-                  background: rgba(255, 255, 255, 0.6) !important;
-                  border-radius: 24px !important;
-                  box-shadow: none !important;
-                }
-        column_span: 10
-      # --- End MEALS SECTION (OurGroceries) ---
       # --- START POPUP SECTION (Hidden) ---
       - type: grid
         cards:
@@ -530,3 +513,66 @@ views:
       attachment: fixed
       # Use File Editor and upload calbackgrd.png to /www/ folder, this translates to /local on this dashboard, so leave /local here.
       image: /local/calbackgrd.png # <--- UPDATE THIS ENTITY
+  - type: sections
+    max_columns: 10
+    title: Lists
+    path: lists
+    theme: Skylight
+    sections:
+      - type: grid
+        cards:
+          - type: vertical-stack
+            cards:
+              - type: markdown
+                content: <font color="Black" size="6">Lists</font>
+                grid_options:
+                  columns: 18
+                  rows: auto
+            grid_options:
+              columns: 120
+              rows: auto
+        column_span: 10
+      - type: grid
+        cards:
+          - type: todo-list
+            title: Meals
+            entity: todo.meals
+            hide_completed: true
+            hide_section_headers: true
+            item_tap_action: edit
+            grid_options:
+              columns: 60
+              rows: auto
+            card_mod:
+              style: |
+                ha-card {
+                  background: rgba(255, 255, 255, 0.6) !important;
+                  border-radius: 24px !important;
+                  box-shadow: none !important;
+                }
+          - type: todo-list
+            title: Meijer
+            entity: todo.meijer
+            hide_completed: true
+            hide_section_headers: true
+            item_tap_action: edit
+            grid_options:
+              columns: 60
+              rows: auto
+            card_mod:
+              style: |
+                ha-card {
+                  background: rgba(255, 255, 255, 0.6) !important;
+                  border-radius: 24px !important;
+                  box-shadow: none !important;
+                }
+        column_span: 10
+    cards: []
+    icon: mdi:format-list-checks
+    background:
+      opacity: 62
+      alignment: center
+      size: cover
+      repeat: repeat
+      attachment: fixed
+      image: /local/calbackgrd.png
