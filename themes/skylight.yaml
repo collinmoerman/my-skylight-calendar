@@ -71,5 +71,6 @@ Skylight:
   calendar3-default-primary-color: "#a6cee3"
   calendar4-default-primary-color: "#cab2d6"
   family-default-primary-color: "#4A90E2"
+  benchapp-default-primary-color: "#7E57C2"
   birthdays-default-primary-color: "#33a02c"
   holidays-default-primary-color: "#ff7f00"

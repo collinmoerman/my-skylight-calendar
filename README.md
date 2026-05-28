@@ -79,13 +79,11 @@ The hardware I originally used I chose based on what I mentioned above plus with
 
 ### Moerman fork notes
 
-This fork is tailored for `collinmoerman`'s Home Assistant instance.
+This fork keeps the upstream HACS/custom-card dashboard structure and applies only Moerman-specific mappings.
 
-* The original chores concept has been replaced with a native Home Assistant **Meals** panel.
-* Meals are rendered from the OurGroceries to-do entity `todo.meals`.
-* The deployed dashboard uses built-in Home Assistant cards only: calendar, weather forecast, markdown, heading, and to-do list. This avoids requiring HACS/custom frontend card installs on Home Assistant Core.
-* The calendar entities are pre-mapped to `calendar.family`, `calendar.collin_moerman_gmail_com`, `calendar.birthdays`, `calendar.benchapp`, and `calendar.working_location`.
-* The weather entity is pre-mapped to `weather.nws_weather_karb`.
+* Calendars are limited to `calendar.family` and `calendar.benchapp`.
+* The original chores concept is represented by a **Meals** section backed by OurGroceries `todo.meals`.
+* Weather is mapped to `weather.nws_weather_karb`.
 
 *Note: This setup uses a **YAML Package** to automatically create all the necessary helpers, scripts, and variables for you. You do not need to create them manually.*
 
