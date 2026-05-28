@@ -18,6 +18,14 @@ input_text:
     icon: mdi:text
 
 input_select:
+  skylight_dashboard_panel:
+    name: Skylight Dashboard Panel
+    options:
+      - Calendar
+      - Lists
+    initial: Calendar
+    icon: mdi:view-dashboard
+
   calendar_select:
     name: Select Calendar
     options:
@@ -55,6 +63,24 @@ input_boolean:
     icon: mdi:calendar-clock
 
 script:
+  show_family_calendar_panel:
+    alias: Show Family Calendar Panel
+    sequence:
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.skylight_dashboard_panel
+        data:
+          option: Calendar
+
+  show_family_lists_panel:
+    alias: Show Family Lists Panel
+    sequence:
+      - action: input_select.select_option
+        target:
+          entity_id: input_select.skylight_dashboard_panel
+        data:
+          option: Lists
+
   family_calendar_visible_filter:
     alias: Toggle Family Calendar
     sequence:
