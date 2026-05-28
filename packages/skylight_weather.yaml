@@ -1,0 +1,35 @@
+# ==============================================================================
+#  SKYLIGHT WEATHER FORECAST PACKAGE
+# ==============================================================================
+
+template:
+  - triggers:
+      - trigger: event
+        event_type: homeassistant_started
+      - trigger: event
+        event_type: event_template_reloaded
+      - trigger: time_pattern
+        minutes: /15
+    actions:
+      - action: weather.get_forecasts
+        target:
+          entity_id: weather.nws_weather_karb
+        data:
+          type: twice_daily
+        response_variable: skylight_weather
+    sensor:
+      - name: Skylight Weather Next 7 Days
+        unique_id: skylight_weather_next_7_days
+        state: "{{ now().isoformat() }}"
+        attributes:
+          forecast: >-
+            {% set forecast = skylight_weather.get('weather.nws_weather_karb', {}).get('forecast', []) %}
+            {% set tomorrow = (as_timestamp(today_at()) + 86400) | timestamp_custom('%Y-%m-%d', true) %}
+            {% set ns = namespace(days=[]) %}
+            {% for item in forecast %}
+              {% set item_date = as_datetime(item.datetime).astimezone().strftime('%Y-%m-%d') %}
+              {% if item_date >= tomorrow and (item.is_daytime | default(true)) and ns.days | length < 7 %}
+                {% set ns.days = ns.days + [item] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.days }}
