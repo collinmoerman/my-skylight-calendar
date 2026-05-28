@@ -5,10 +5,10 @@
 input_text:
   family_calendar_filter:
     name: Family Filter
-    initial: ".*"
+    initial: "^$"
   benchapp_calendar_filter:
     name: BenchApp Filter
-    initial: ".*"
+    initial: "^$"
 
   calendar_event_title:
     name: Event Title

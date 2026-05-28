@@ -209,7 +209,7 @@ views:
                 styles: |
                   * { font-size: 1.18em !important; }
                   .bubble-icon { --mdc-icon-size: 34px !important; }
-                  ha-card, .bubble-button-card-container { cursor: pointer !important; }
+                  ha-card, .bubble-button-card-container { min-height: 72px !important; cursor: pointer !important; }
                   .bubble-button-background {
                     opacity: 1 !important;
                     background-color: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Calendar' ? 'var(--family-default-primary-color)' : 'rgba(255, 255, 255, 0.6)'} !important;
@@ -235,7 +235,7 @@ views:
                 styles: |
                   * { font-size: 1.18em !important; }
                   .bubble-icon { --mdc-icon-size: 34px !important; }
-                  ha-card, .bubble-button-card-container { cursor: pointer !important; }
+                  ha-card, .bubble-button-card-container { min-height: 72px !important; cursor: pointer !important; }
                   .bubble-button-background {
                     opacity: 1 !important;
                     background-color: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Lists' ? 'var(--family-default-primary-color)' : 'rgba(255, 255, 255, 0.6)'} !important;
@@ -246,7 +246,7 @@ views:
                   }
             grid_options:
               columns: 120
-              rows: auto
+              rows: 2
           - type: custom:bubble-card
             card_type: button
             button_type: name
