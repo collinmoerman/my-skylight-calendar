@@ -462,67 +462,64 @@ views:
       # --- START POPUP SECTION (Hidden) ---
       - type: grid
         cards:
-          - type: vertical-stack
+          - type: custom:bubble-card
+            card_type: pop-up
+            hash: "#addcalendarevent"
+            button_type: name
+            name: Add Calendar Event
+            icon: mdi:calendar-plus
+            show_icon: true
+            show_name: true
+            styles: |
+              .bubble-button-card-container {
+                background: ${hass.states['input_select.calendar_select'].state == 'BenchApp' ? 'var(--benchapp-default-primary-color)' : 'var(--family-default-primary-color)'} !important;
+              }
             cards:
-              - type: custom:bubble-card
-                card_type: pop-up
-                hash: "#addcalendarevent"
-                button_type: name
-                name: Add Calendar Event
-                icon: mdi:calendar-plus
-                show_icon: true
-                show_name: true
-                styles: |
-                  .bubble-button-card-container {
-                    background: ${hass.states['input_select.calendar_select'].state == 'BenchApp' ? 'var(--benchapp-default-primary-color)' : 'var(--family-default-primary-color)'} !important;
-                  }
-              - type: vertical-stack
-                cards:
-                  - type: entities
-                    entities:
-                      - entity: input_select.calendar_select
-                      - entity: input_text.calendar_event_title
-                        name: Event Title
-                      - entity: input_text.calendar_event_description
-                        name: Event Description
-                      - entity: input_boolean.calendar_all_day_event
-                        name: All Day Event
-                    title: Add Calendar Event
-                    state_color: false
-                  - type: conditional
-                    conditions:
-                      - entity: input_boolean.calendar_all_day_event
-                        state: "off"
-                    card:
-                      type: entities
-                      entities:
-                        - entity: input_datetime.calendar_event_start
-                          name: Start Time
-                        - entity: input_datetime.calendar_event_end
-                          name: End Time
-                  - type: conditional
-                    conditions:
-                      - entity: input_boolean.calendar_all_day_event
-                        state: "on"
-                    card:
-                      type: entities
-                      entities:
-                        - entity: input_datetime.calendar_day_event_start
-                          name: Event Start Date
-                        - entity: input_datetime.calendar_day_event_end
-                          name: Event End Date
-                  - type: custom:button-card
-                    name: Add Event to Calendar
-                    tap_action:
-                      action: call-service
-                      service: script.add_google_calendar_event
-                    styles:
-                      card:
-                        - background-color: |
-                            [[[
-                              if (states['input_select.calendar_select'].state == 'BenchApp') return "var(--benchapp-default-primary-color)";
-                              return "var(--family-default-primary-color)";
-                            ]]]                
+              - type: entities
+                entities:
+                  - entity: input_select.calendar_select
+                  - entity: input_text.calendar_event_title
+                    name: Event Title
+                  - entity: input_text.calendar_event_description
+                    name: Event Description
+                  - entity: input_boolean.calendar_all_day_event
+                    name: All Day Event
+                title: Add Calendar Event
+                state_color: false
+              - type: conditional
+                conditions:
+                  - entity: input_boolean.calendar_all_day_event
+                    state: "off"
+                card:
+                  type: entities
+                  entities:
+                    - entity: input_datetime.calendar_event_start
+                      name: Start Time
+                    - entity: input_datetime.calendar_event_end
+                      name: End Time
+              - type: conditional
+                conditions:
+                  - entity: input_boolean.calendar_all_day_event
+                    state: "on"
+                card:
+                  type: entities
+                  entities:
+                    - entity: input_datetime.calendar_day_event_start
+                      name: Event Start Date
+                    - entity: input_datetime.calendar_day_event_end
+                      name: Event End Date
+              - type: custom:button-card
+                name: Add Event to Calendar
+                tap_action:
+                  action: call-service
+                  service: script.add_google_calendar_event
+                styles:
+                  card:
+                    - background-color: |
+                        [[[
+                          if (states['input_select.calendar_select'].state == 'BenchApp') return "var(--benchapp-default-primary-color)";
+                          return "var(--family-default-primary-color)";
+                        ]]]                
     cards: []
     icon: mdi:calendar-blank-multiple
     background:
