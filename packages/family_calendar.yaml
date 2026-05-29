@@ -66,6 +66,29 @@ input_boolean:
     icon: mdi:account-plus
     initial: true
 
+# Add or remove Family Lists tab cards here. Each item in todo_lists.lists
+# becomes one todo-list card; columns controls the grid width.
+template:
+  - sensor:
+      - name: Family Dashboard Todo Lists
+        unique_id: family_dashboard_todo_lists
+        default_entity_id: sensor.family_dashboard_todo_lists
+        state: "{{ todo_lists.lists | count }}"
+        variables:
+          todo_lists:
+            columns: 2
+            defaults:
+              hide_completed: true
+              hide_section_headers: true
+              item_tap_action: edit
+            lists:
+              - title: Meals
+                entity: todo.meals
+              - title: Meijer
+                entity: todo.meijer
+        attributes:
+          config: "{{ todo_lists | to_json }}"
+
 script:
   family_calendar_visible_filter:
     alias: Toggle Family Calendar

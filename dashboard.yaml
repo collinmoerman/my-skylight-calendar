@@ -594,98 +594,98 @@ views:
                   flex: "1 1 50%"
                   max-width: none
                 card:
-                  type: grid
-                  columns: 2
-                  square: false
-                  cards:
-                    - type: todo-list
-                      title: Meals
-                      entity: todo.meals
-                      hide_completed: true
-                      hide_section_headers: true
-                      item_tap_action: edit
-                      card_mod:
-                        style: |
-                          ha-card {
-                            --ha-card-header-color: #333333;
-                            --ha-card-header-font-size: 2.1em;
-                            background: rgba(255, 255, 255, 0.6) !important;
-                            border-radius: 24px !important;
-                            box-shadow: none !important;
-                            color: #333333 !important;
-                            font-family: inherit !important;
+                  type: custom:config-template-card
+                  entities:
+                    - sensor.family_dashboard_todo_lists
+                  variables:
+                    TODO_CONFIG: |
+                      (() => {
+                        const raw = states['sensor.family_dashboard_todo_lists']?.attributes?.config || '{}';
+                        try {
+                          const config = typeof raw === 'string' ? JSON.parse(raw) : raw;
+                          return config && typeof config === 'object' ? config : {};
+                        } catch (error) {
+                          console.error('Unable to parse family dashboard todo list config', error);
+                          return {};
+                        }
+                      })()
+                    TODO_COLUMNS: |
+                      (() => {
+                        const config = vars.TODO_CONFIG;
+                        const lists = Array.isArray(config.lists) ? config.lists : [];
+                        const configuredColumns = Number(config.columns);
+                        if (Number.isFinite(configuredColumns) && configuredColumns > 0) return configuredColumns;
+                        return Math.min(Math.max(lists.length, 1), 2);
+                      })()
+                    TODO_LIST_CARDS: |
+                      (() => {
+                        const config = vars.TODO_CONFIG;
+                        const defaults = config.defaults || {};
+                        const lists = Array.isArray(config.lists) ? config.lists : [];
+                        const listCardStyle = [
+                          'ha-card {',
+                          '  --ha-card-header-color: #333333;',
+                          '  --ha-card-header-font-size: 2.1em;',
+                          '  background: rgba(255, 255, 255, 0.6) !important;',
+                          '  border-radius: 24px !important;',
+                          '  box-shadow: none !important;',
+                          '  color: #333333 !important;',
+                          '  font-family: inherit !important;',
+                          '}',
+                          'ha-list {',
+                          '  padding: 2px 0 14px !important;',
+                          '}',
+                          'ha-check-list-item {',
+                          '  --mdc-list-side-padding: 20px;',
+                          '  min-height: 58px !important;',
+                          '  color: #333333 !important;',
+                          '}',
+                          '.summary {',
+                          '  color: #333333 !important;',
+                          '  font-family: inherit !important;',
+                          '  font-size: 1.35em !important;',
+                          '  font-weight: 600 !important;',
+                          '  line-height: 1.25 !important;',
+                          '}',
+                          '.description,',
+                          '.due,',
+                          '.empty {',
+                          '  font-size: 1.05em !important;',
+                          '  line-height: 1.25 !important;',
+                          '}',
+                          '.addRow {',
+                          '  padding: 0 18px 12px !important;',
+                          '}',
+                          '.addRow ha-input {',
+                          '  --mdc-typography-subtitle1-font-size: 1.15em;',
+                          '}'
+                        ].join('\n');
+                        const cards = lists
+                          .filter((list) => list && list.entity)
+                          .map((list) => ({
+                            type: 'todo-list',
+                            title: list.title || list.name || list.entity,
+                            entity: list.entity,
+                            hide_completed: list.hide_completed ?? defaults.hide_completed ?? true,
+                            hide_section_headers: list.hide_section_headers ?? defaults.hide_section_headers ?? true,
+                            item_tap_action: list.item_tap_action ?? defaults.item_tap_action ?? 'edit',
+                            card_mod: {
+                              style: listCardStyle
+                            }
+                          }));
+                        return cards.length ? cards : [{
+                          type: 'markdown',
+                          content: 'No todo lists configured.',
+                          card_mod: {
+                            style: 'ha-card { background: rgba(255, 255, 255, 0.6) !important; border-radius: 24px !important; box-shadow: none !important; color: #333333 !important; }'
                           }
-                          ha-list {
-                            padding: 2px 0 14px !important;
-                          }
-                          ha-check-list-item {
-                            --mdc-list-side-padding: 20px;
-                            min-height: 58px !important;
-                            color: #333333 !important;
-                          }
-                          .summary {
-                            color: #333333 !important;
-                            font-family: inherit !important;
-                            font-size: 1.35em !important;
-                            font-weight: 600 !important;
-                            line-height: 1.25 !important;
-                          }
-                          .description,
-                          .due,
-                          .empty {
-                            font-size: 1.05em !important;
-                            line-height: 1.25 !important;
-                          }
-                          .addRow {
-                            padding: 0 18px 12px !important;
-                          }
-                          .addRow ha-input {
-                            --mdc-typography-subtitle1-font-size: 1.15em;
-                          }
-                    - type: todo-list
-                      title: Meijer
-                      entity: todo.meijer
-                      hide_completed: true
-                      hide_section_headers: true
-                      item_tap_action: edit
-                      card_mod:
-                        style: |
-                          ha-card {
-                            --ha-card-header-color: #333333;
-                            --ha-card-header-font-size: 2.1em;
-                            background: rgba(255, 255, 255, 0.6) !important;
-                            border-radius: 24px !important;
-                            box-shadow: none !important;
-                            color: #333333 !important;
-                            font-family: inherit !important;
-                          }
-                          ha-list {
-                            padding: 2px 0 14px !important;
-                          }
-                          ha-check-list-item {
-                            --mdc-list-side-padding: 20px;
-                            min-height: 58px !important;
-                            color: #333333 !important;
-                          }
-                          .summary {
-                            color: #333333 !important;
-                            font-family: inherit !important;
-                            font-size: 1.35em !important;
-                            font-weight: 600 !important;
-                            line-height: 1.25 !important;
-                          }
-                          .description,
-                          .due,
-                          .empty {
-                            font-size: 1.05em !important;
-                            line-height: 1.25 !important;
-                          }
-                          .addRow {
-                            padding: 0 18px 12px !important;
-                          }
-                          .addRow ha-input {
-                            --mdc-typography-subtitle1-font-size: 1.15em;
-                          }
+                        }];
+                      })()
+                  card:
+                    type: grid
+                    columns: ${ TODO_COLUMNS }
+                    square: false
+                    cards: ${ TODO_LIST_CARDS }
             grid_options:
               columns: 120
               rows: auto
