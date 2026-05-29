@@ -1,0 +1,27 @@
+# Merge this into /config/configuration.yaml under the top-level lovelace key.
+# The local instance uses /local/community paths. If your HACS install exposes
+# /hacsfiles paths instead, keep the same filenames and adjust only the prefix.
+lovelace:
+  resources:
+    - url: /local/community/week-planner-card/week-planner-card.js?v=206dd593
+      type: module
+    - url: /local/community/bubble-card/bubble-card.js
+      type: module
+    - url: /local/community/config-template-card/config-template-card.js
+      type: module
+    - url: /local/community/lovelace-card-mod/card-mod.js
+      type: module
+    - url: /local/community/better-moment-card/better-moment-card.js
+      type: module
+    - url: /local/community/weather-card/weather-card.js
+      type: module
+    - url: /local/community/lovelace-layout-card/layout-card.js
+      type: module
+    - url: /local/community/button-card/button-card.js
+      type: module
+    - url: /local/community/input-multiselect-card/input-multiselect-card.js
+      type: module
+    - url: /local/community/tabbed-card/tabbed-card.js
+      type: module
+    - url: /local/community/lovelace-thermostat-card/main.js
+      type: module

@@ -11,24 +11,34 @@ template:
       - trigger: time_pattern
         minutes: /15
     actions:
+      - variables:
+          weather_entity: >-
+            {% set config = (state_attr('sensor.family_dashboard_header_config', 'config') or '{}') | from_json %}
+            {{ config.get('weather', {}).get('entity', 'weather.nws_weather_karb') }}
+          forecast_days: >-
+            {% set config = (state_attr('sensor.family_dashboard_header_config', 'config') or '{}') | from_json %}
+            {{ config.get('weather', {}).get('forecast_days', 5) | int(5) }}
       - action: weather.get_forecasts
         target:
-          entity_id: weather.nws_weather_karb
+          entity_id: "{{ weather_entity }}"
         data:
           type: twice_daily
         response_variable: skylight_weather
     sensor:
-      - name: Skylight Weather Next 7 Days
+      - name: Skylight Weather Next 5 Days
         unique_id: skylight_weather_next_7_days
+        default_entity_id: sensor.skylight_weather_next_7_days
         state: "{{ now().isoformat() }}"
         attributes:
+          source_entity: "{{ weather_entity }}"
+          forecast_days: "{{ forecast_days | int(5) }}"
           forecast: >-
-            {% set forecast = skylight_weather.get('weather.nws_weather_karb', {}).get('forecast', []) %}
+            {% set forecast = skylight_weather.get(weather_entity, {}).get('forecast', []) %}
             {% set tomorrow = (as_timestamp(today_at()) + 86400) | timestamp_custom('%Y-%m-%d', true) %}
             {% set ns = namespace(days=[]) %}
             {% for item in forecast %}
               {% set item_date = as_datetime(item.datetime).astimezone().strftime('%Y-%m-%d') %}
-              {% if item_date >= tomorrow and (item.is_daytime | default(true)) and ns.days | length < 7 %}
+              {% if item_date >= tomorrow and (item.is_daytime | default(true)) and ns.days | length < (forecast_days | int(5)) %}
                 {% set ns.days = ns.days + [item] %}
               {% endif %}
             {% endfor %}

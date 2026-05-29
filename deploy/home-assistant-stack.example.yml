@@ -1,0 +1,12 @@
+# Example Portainer/Compose stack once the custom Home Assistant image exists.
+# Replace the image tag with the pushed image produced from the core fork.
+services:
+  homeassistant:
+    image: ghcr.io/collinmoerman/home-assistant:event-colors-2026.5.4
+    container_name: homeassistant
+    network_mode: host
+    environment:
+      - TZ=America/Detroit
+    volumes:
+      - /volume1/docker/homeassistant/config:/config
+    restart: unless-stopped

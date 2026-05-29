@@ -79,130 +79,128 @@ The hardware I originally used I chose based on what I mentioned above plus with
 
 ### Moerman fork notes
 
-This fork keeps the upstream HACS/custom-card dashboard structure and applies only Moerman-specific mappings.
+This fork keeps the upstream HACS/custom-card dashboard structure and applies the Moerman-specific mappings needed for the live Home Assistant instance.
 
-* Calendars are limited to `calendar.family` and `calendar.benchapp`.
-* The original chores concept is represented by a **Family Lists** toggle with OurGroceries `todo.meals` and `todo.meijer` cards.
-* Weather is mapped to `weather.nws_weather_karb`.
+* Calendars are limited to `calendar.family` and `calendar.benchapp_2`.
+* The dashboard has a `Calendar` tab and a `Lists` tab. The Lists tab defaults to OurGroceries `todo.meals` and `todo.meijer`.
+* The header has time, current weather, five-day forecast, and a configurable Nest thermostat card.
+* Google event colors require the patched Home Assistant core, patched Home Assistant frontend package, patched `gcal_sync`, and patched `week-planner-card` fork described in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+* Standard Home Assistant helpers are created by the YAML package. `input_multiselect` helpers are not YAML-backed and must be created in the UI once, then kept with stable entity IDs.
 
-*Note: This setup uses a **YAML Package** to automatically create all the necessary helpers, scripts, and variables for you. You do not need to create them manually.*
+For production rebuilds, use [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) as the source of truth. It lists the current fork refs, custom image strategy, custom card resources, and restore checklist.
 
-### 1. Prerequisites (HACS)
+### 1. Prerequisites
 
-You must have [HACS](https://hacs.xyz/) installed. Please install the following **Frontend** integrations:
+Home Assistant must have packages and themes enabled:
 
-* `week-planner-card`
+```yaml
+homeassistant:
+  packages: !include_dir_named packages
+
+frontend:
+  themes: !include_dir_merge_named themes
+```
+
+Install these frontend cards through HACS or as custom repositories:
+
+* `week-planner-card` from the Moerman event-colors fork/build until those changes are released upstream.
 * `bubble-card`
 * `config-template-card`
 * `card-mod`
 * `better-moment-card`
-* `weather-card`
-* `browser_mod` (Required for the popups to work)
-* `layout-card` (Required for the Sections view)
-* `button-card` (Required for the popup to add event)
+* `weather-card` from `bramkragten/weather-card`, including its `icons/` directory.
+* `browser_mod`
+* `layout-card`
+* `button-card`
+* `input-multiselect-card` from `portbusy/ha-input-multiselect-card`
+* `tabbed-card` from `kinghat/tabbed-card`
+* `lovelace-thermostat-card` from `fineemb/lovelace-thermostat-card`
 
-*Note: In Settings → Devices & Services, make sure Browser Mod appears as an Integration (tile) and not only under HACS. 
-If it isn’t there, click Add Integration → Browser Mod and finish the flow, then restart HA.
-Installing via HACS only downloads files; you must add the integration so HA registers its actions/entities.
+Install these integrations/components:
 
-### 2. The Backend (The Brains)
+* Browser Mod from Settings > Devices & Services, not only from HACS downloads.
+* `input_multiselect` from `portbusy/ha-input-multiselect`.
+* The patched Google Calendar event-color stack if Google event colors need to render in both the stock calendar and this dashboard.
 
-1. Open your `configuration.yaml` file in Home Assistant.
-2. Ensure you have this line added under `homeassistant:` to enable packages:
+### 2. Backend Packages
 
-   ```yaml
-   homeassistant:
-     packages: !include_dir_named packages
-   ```
+Copy these files into your Home Assistant config directory:
 
-3. Create a folder named `packages` in your HA config directory (if you don't have one).
-4. Download [packages/family_calendar.yaml](packages/family_calendar.yaml) from this repo.
-5. Search for string [ #<--- UPDATE THIS ENTITY]  and update the calendar entity ID to match your environment. Check section 3 for more details.
-6. Place the file inside your `packages/` folder.
-7. **Restart Home Assistant**.
+* [packages/family_calendar.yaml](packages/family_calendar.yaml) -> `/config/packages/family_calendar.yaml`
+* [packages/skylight_weather.yaml](packages/skylight_weather.yaml) -> `/config/packages/skylight_weather.yaml`
 
-### 3. The Calendars
+Edit `packages/family_calendar.yaml` for local mappings:
 
-You can use **Google Calendars** or **Local Calendars**.
+* `sensor.family_dashboard_header_config`: thermostat entity/title, weather entity, forecast entity, and forecast day count.
+* `sensor.family_dashboard_invitees`: add-event invitee names, emails, and default checked state.
+* `sensor.family_dashboard_todo_lists`: any number of todo-list cards for the Lists tab.
+* `script.add_google_calendar_event`: calendar entity map. This fork currently targets `calendar.family` and `calendar.benchapp_2`.
 
-#### Option A: Reuse Calendar Names (Easiest)
+The forecast package reads the weather entity and day count from `sensor.family_dashboard_header_config`; there is no separate weather entity to update in `skylight_weather.yaml`.
 
+### 3. UI-Backed Multiselect Helpers
 
-1. Go to **Settings > Devices & Services**.
-2. Add the **Local Calendar** integration.
-3. Create calendars named exactly: `calendar1`, `calendar2`, `calendar3`, `calendar4`, `Family`.
-    * *If you use these names, the code works out of the box!*
+Create these with the `input_multiselect` integration UI before loading the dashboard:
 
-#### Option B: Custom Calendar
+* Name: `Calendar Selection`; entity ID: `input_multiselect.calendar_selection`; options: `Family`, `BenchApp`; selected by default: both.
+* Name: `Calendar Event Invitees`; entity ID: `input_multiselect.calendar_event_invitees`; options: `Collin`, `Ashley`; selected by default: both.
 
-1. Go to **Settings > Devices & Services**.
-2. Add the **Local Calendar** integration. or **Google Calendar**.
-3. Navigate to **Configuration > Integrations > Local Calendar** or **Google Calendar** and select "Add Entry"
-4. For each created entry, get the entity ID for updating the dashboard.yaml file.
-5. Open `dashboard.yaml`.
-6. Search for `# <--- UPDATE THIS ENTITY`.
-7. Update the entity ID matching your environment
+The invitee helper is re-synced from YAML by `script.sync_calendar_event_invitees` on Home Assistant start, but the helper entity must already exist. If Home Assistant generates a different entity ID, rename it in the entity registry or update the dashboard/package references.
 
+### 4. Lovelace Resources
 
-#### Setting up Holidays
+Merge [deploy/lovelace-resources.yaml](deploy/lovelace-resources.yaml) into the live `lovelace.resources` block in `configuration.yaml`. The example uses `/local/community/...` paths because that is what the live instance uses. If your HACS install exposes `/hacsfiles/...`, keep the filenames and adjust only the path prefix.
 
-Since Home Assistant updates, Holidays are now added via UI:
+The custom `week-planner-card` build is especially important. If HACS updates it back to upstream, this dashboard will lose event-level Google colors.
 
-1. Go to **Settings > Devices & Services > Add Integration > Holiday**.
-2. Select your country.
-3. Check the entity ID (e.g., `calendar.holidays`). If it differs from the default, update it in the dashboard YAML.
+### 5. Dashboard And Theme
 
-### 4. The Dashboard (The Look)
+1. Create or open the `skylight-calendar` dashboard.
+2. Open the raw YAML editor and paste [dashboard.yaml](dashboard.yaml).
+3. Copy [themes/skylight.yaml](themes/skylight.yaml) to `/config/themes/skylight.yaml`.
+4. Copy [calbackgrd.png](calbackgrd.png) to `/config/www/calbackgrd.png`.
+5. Restart Home Assistant and select the `Skylight` theme for the display user.
 
-1. Go to **Settings > Dashboard**
-2. Click on **Add Dashboard** (Select option "New Dashboard from Scratch" make sure to select "Add to sidebar").
-3. On the left menu, select the new created dashboard and click on the pencil icon to edit it.
-5. Select the 3 dots icon and select "Raw configurator editor".
-6. Copy and paste the code from [dashboard.yaml](dashboard.yaml).
+### 6. Custom Home Assistant Image
 
-### Step 5: The Theme (Optional)
+For Google event colors to survive updates, Portainer should run a custom Home Assistant image, not the stock image. The image should include:
 
-To get the specific font look (Ovo):
+* `home-assistant-core` from the `event-colors` fork.
+* `gcal_sync` pinned to the commit listed in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
+* `home-assistant-frontend` from the `event-colors-2026.5.4` package fork listed in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
-1. Ensure your `configuration.yaml` has this line under `frontend:`
-
-   ```yaml
-   frontend:
-     themes: !include_dir_merge_named themes
-   ```
-
-2. Create a folder named `themes` in your config directory.
-3. Download [themes/skylight.yaml](themes/skylight.yaml) and place it in that folder.
-4. Use File Editor and upload calbackgrd.png to /www/ folder, that translates internally to /local on the dashboard.
-5. Restart Home Assistant.
-6. Go to your Profile (User Icon bottom left) and change **Theme** to `Skylight`.
-NOTE: The theme is not comprehensive, so keep that in mind
+An example stack shape is provided in [deploy/home-assistant-stack.example.yml](deploy/home-assistant-stack.example.yml). Replace the image tag with the actual pushed custom image tag.
 
 ---
 
 ## 📐 How It Works (Under the Hood)
 
-### Filter Logic
+### Calendar Selection
 
-The `week-planner-card` does not natively support hiding specific calendars on the fly. To solve this, I used **Input Texts** acting as Regex filters.
+The calendar picker is `input_multiselect.calendar_selection`. `config-template-card` converts the selected options into filters for `week-planner-card`, so Family and BenchApp can be enabled independently while the calendar card stays in one place.
 
-* When you click a person's button, it toggles their filter between `.*` (Show everything) and `^$` (Show nothing).
-* `config-template-card` injects these variables into the calendar card dynamically.
+### Event Colors
+
+Google event colors pass through four layers:
+
+1. `gcal_sync` fetches calendar and event color metadata from Google.
+2. The Home Assistant Google Calendar integration exposes those colors on calendar events.
+3. The Home Assistant frontend renders those colors in the stock calendar.
+4. The forked `week-planner-card` reads the same event color fields when `useEventColors: true` is set in [dashboard.yaml](dashboard.yaml).
+
+If any of those layers is replaced with the stock upstream version, this dashboard falls back to the static calendar colors.
 
 ### Event Creation Script
 
-The "Add Event" popup uses a single script that handles logic for multiple people and event types (All Day vs Timed).
+The Add Event popup calls `script.add_google_calendar_event`. The script selects the target Google calendar, passes title/description/location, supports all-day or timed events, and sends selected invitees through the patched `google.create_event` attendees field.
 
-```yaml
-# Simplified Logic Example
-target_calendar: "{{ calendar_map.get(states('input_select.calendar_select')) }}"
+### Lists Tab
 
-choose:
-  - conditions: "All Day Event is ON"
-    action: calendar.create_event (start_date, end_date)
-  - conditions: "All Day Event is OFF"
-    action: calendar.create_event (start_date_time, end_date_time)
-```
+The Lists tab is generated from `sensor.family_dashboard_todo_lists` in [packages/family_calendar.yaml](packages/family_calendar.yaml). Add or remove list entries there; the dashboard will create one todo card per configured list.
+
+### Weather Header
+
+The current weather card and forecast sensor read from `sensor.family_dashboard_header_config`. The forecast sensor keeps the existing entity ID `sensor.skylight_weather_next_7_days` for compatibility, but it now renders the configured number of days, currently five.
 
 ## NOTES
 

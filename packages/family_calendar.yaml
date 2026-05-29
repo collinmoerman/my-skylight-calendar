@@ -74,6 +74,7 @@ template:
             weather:
               entity: weather.nws_weather_karb
               forecast_entity: sensor.skylight_weather_next_7_days
+              forecast_days: 5
         attributes:
           config: "{{ header_config | to_json }}"
 
