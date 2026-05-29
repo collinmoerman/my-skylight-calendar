@@ -697,6 +697,9 @@ views:
           - type: custom:bubble-card
             card_type: pop-up
             hash: "#addcalendarevent"
+            popup_mode: fit-content
+            width_desktop: 640px
+            margin_top_desktop: 6vh
             button_type: name
             name: Add Calendar Event
             icon: mdi:calendar-plus
@@ -714,8 +717,16 @@ views:
                     name: Event Title
                   - entity: input_text.calendar_event_description
                     name: Event Description
+                  - entity: input_text.calendar_event_location
+                    name: Location
                   - entity: input_boolean.calendar_all_day_event
                     name: All Day Event
+                  - type: section
+                    label: Invitees
+                  - entity: input_boolean.calendar_invite_collin
+                    name: Invite Collin
+                  - entity: input_boolean.calendar_invite_ashley
+                    name: Invite Ashley
                 title: Add Calendar Event
                 state_color: false
               - type: conditional

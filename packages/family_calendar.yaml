@@ -16,6 +16,9 @@ input_text:
   calendar_event_description:
     name: Event Description
     icon: mdi:text
+  calendar_event_location:
+    name: Event Location
+    icon: mdi:map-marker
 
 input_select:
   calendar_select:
@@ -54,6 +57,14 @@ input_boolean:
   calendar_all_day_event:
     name: All Day Event
     icon: mdi:calendar-clock
+  calendar_invite_collin:
+    name: Invite Collin
+    icon: mdi:account-plus
+    initial: true
+  calendar_invite_ashley:
+    name: Invite Ashley
+    icon: mdi:account-plus
+    initial: true
 
 script:
   family_calendar_visible_filter:
@@ -74,14 +85,52 @@ script:
         data:
           value: "{% if is_state('input_text.benchapp_calendar_filter', '.*') %}^${% else %}.*{% endif %}"
 
+  sync_calendar_event_invitee_defaults:
+    alias: Reset Calendar Event Invitees
+    sequence:
+      - variables:
+          invitees: &calendar_event_invitees
+            - name: Collin
+              email: collin.moerman@gmail.com
+              entity: input_boolean.calendar_invite_collin
+              default: true
+            - name: Ashley
+              email: ashley.moerman@gmail.com
+              entity: input_boolean.calendar_invite_ashley
+              default: true
+      - repeat:
+          for_each: "{{ invitees }}"
+          sequence:
+            - choose:
+                - conditions:
+                    - condition: template
+                      value_template: "{{ repeat.item.default | bool }}"
+                  sequence:
+                    - action: input_boolean.turn_on
+                      target:
+                        entity_id: "{{ repeat.item.entity }}"
+              default:
+                - action: input_boolean.turn_off
+                  target:
+                    entity_id: "{{ repeat.item.entity }}"
+
   add_google_calendar_event:
     alias: Process Add Calendar Event
     sequence:
       - variables:
+          invitees: *calendar_event_invitees
           calendar_map:
             Family: calendar.family
             BenchApp: calendar.benchapp_2
           target_calendar: "{{ calendar_map.get(states('input_select.calendar_select'), 'calendar.family') }}"
+          selected_invitee_emails: >-
+            {% set ns = namespace(emails=[]) %}
+            {% for invitee in invitees %}
+              {% if is_state(invitee.entity, 'on') %}
+                {% set ns.emails = ns.emails + [invitee.email] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.emails | join(',') }}
 
       - choose:
           - conditions:
@@ -89,12 +138,14 @@ script:
                 entity_id: input_boolean.calendar_all_day_event
                 state: "on"
             sequence:
-              - action: calendar.create_event
+              - action: google.create_event
                 target:
                   entity_id: "{{ target_calendar }}"
                 data:
                   summary: "{{ states('input_text.calendar_event_title') }}"
                   description: "{{ states('input_text.calendar_event_description') }}"
+                  location: "{{ states('input_text.calendar_event_location') }}"
+                  attendees: "{{ selected_invitee_emails }}"
                   start_date: "{{ states('input_datetime.calendar_day_event_start') }}"
                   end_date: "{{ states('input_datetime.calendar_day_event_end') }}"
           - conditions:
@@ -102,12 +153,14 @@ script:
                 entity_id: input_boolean.calendar_all_day_event
                 state: "off"
             sequence:
-              - action: calendar.create_event
+              - action: google.create_event
                 target:
                   entity_id: "{{ target_calendar }}"
                 data:
                   summary: "{{ states('input_text.calendar_event_title') }}"
                   description: "{{ states('input_text.calendar_event_description') }}"
+                  location: "{{ states('input_text.calendar_event_location') }}"
+                  attendees: "{{ selected_invitee_emails }}"
                   start_date_time: "{{ states('input_datetime.calendar_event_start') }}"
                   end_date_time: "{{ states('input_datetime.calendar_event_end') }}"
 
@@ -121,5 +174,11 @@ script:
           entity_id: input_text.calendar_event_description
         data:
           value: ""
+      - action: input_text.set_value
+        target:
+          entity_id: input_text.calendar_event_location
+        data:
+          value: ""
+      - action: script.sync_calendar_event_invitee_defaults
       - action: browser_mod.close_popup
         data: {}
