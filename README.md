@@ -115,6 +115,7 @@ Install these frontend cards through HACS or as custom repositories:
 * `input-multiselect-card` from `portbusy/ha-input-multiselect-card`
 * `tabbed-card` from `kinghat/tabbed-card`
 * `lovelace-thermostat-card` from `fineemb/lovelace-thermostat-card`
+* `kiosk-mode` from `maykar/kiosk-mode` for the dedicated display user.
 
 Install these integrations/components:
 
@@ -160,6 +161,8 @@ The custom `week-planner-card` build is especially important. If HACS updates it
 3. Copy [themes/skylight.yaml](themes/skylight.yaml) to `/config/themes/skylight.yaml`.
 4. Copy [calbackgrd.png](calbackgrd.png) to `/config/www/calbackgrd.png`.
 5. Restart Home Assistant and select the `Skylight` theme for the display user.
+
+For the wall/display device, log in as a non-admin Home Assistant person named `Skylight` and open `/skylight-calendar/family-calendar`; the dashboard YAML hides the Home Assistant header and sidebar for that user through `kiosk-mode`.
 
 ### 6. Custom Home Assistant Image
 

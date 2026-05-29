@@ -75,12 +75,17 @@ Install these custom integrations/cards before loading the dashboard:
 - `week-planner-card` from this fork/build, not the upstream HACS release, until the event-color changes are released upstream.
 - `tabbed-card` from `kinghat/tabbed-card`.
 - `lovelace-thermostat-card` from `fineemb/lovelace-thermostat-card`.
+- `kiosk-mode` from `maykar/kiosk-mode` for the dedicated display user.
 - `weather-card` from `bramkragten/weather-card`, including its `icons/` directory.
 - `bubble-card`, `config-template-card`, `card-mod`, `better-moment-card`, `layout-card`, and `button-card`.
 
 HACS can manage the standard cards, but pin or custom-repo the forked
 `week-planner-card` build. A normal HACS update can overwrite the custom event
 color support.
+
+## Kiosk display user
+
+Log the display in as a non-admin `Skylight` user and open `/skylight-calendar/family-calendar`. The dashboard-level `kiosk_mode.user_settings` block hides the Home Assistant header, sidebar, menu button, and overflow menu for that user only.
 
 ## UI-backed helpers
 

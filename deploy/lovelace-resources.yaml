@@ -25,3 +25,5 @@ lovelace:
       type: module
     - url: /local/community/lovelace-thermostat-card/main.js
       type: module
+    - url: /local/community/kiosk-mode/kiosk-mode.js
+      type: module
