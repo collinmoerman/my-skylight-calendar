@@ -15,16 +15,16 @@ views:
               padding: 0
               card_margin: 0 2px 0 2px
               grid-template-columns: repeat(4, minmax(0, 1fr))
-              grid-template-areas: '"thermostat time current forecast"'
+              grid-template-areas: '"time current forecast thermostat"'
               grid-template-rows: auto
               mediaquery:
                 "(max-width: 900px)":
                   grid-template-columns: 1fr
                   grid-template-areas: |
-                    "thermostat"
                     "time"
                     "current"
                     "forecast"
+                    "thermostat"
             cards:
               - type: custom:config-template-card
                 entities:
@@ -51,7 +51,8 @@ views:
                   title: ${ THERMOSTAT_TITLE }
                   step: 1
                   pending: 3
-                  chevron_size: 44
+                  diameter: 280
+                  chevron_size: 30
                   card_mod:
                     style: |
                       ha-card {
@@ -61,6 +62,29 @@ views:
                         border: none !important;
                         height: 198px !important;
                         overflow: hidden !important;
+                      }
+                      .c_body {
+                        box-sizing: border-box !important;
+                        height: 198px !important;
+                        padding: 6px 10px 8px !important;
+                        display: flex !important;
+                        align-items: center !important;
+                        justify-content: center !important;
+                      }
+                      .dial {
+                        width: 172px !important;
+                        height: 172px !important;
+                        max-width: 172px !important;
+                        min-width: 0 !important;
+                        margin: 0 auto !important;
+                      }
+                      .climate_info {
+                        width: 12% !important;
+                        height: 12% !important;
+                      }
+                      .c_icon {
+                        transform: scale(0.8) !important;
+                        transform-origin: top right !important;
                       }
               - type: custom:better-moment-card
                 parentStyle: |
