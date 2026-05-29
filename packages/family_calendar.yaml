@@ -57,19 +57,41 @@ input_boolean:
   calendar_all_day_event:
     name: All Day Event
     icon: mdi:calendar-clock
-  calendar_invite_collin:
-    name: Invite Collin
-    icon: mdi:account-plus
-    initial: true
-  calendar_invite_ashley:
-    name: Invite Ashley
-    icon: mdi:account-plus
-    initial: true
 
-# Add or remove Family Lists tab cards here. Each item in todo_lists.lists
-# becomes one todo-list card; columns controls the grid width.
+# Dashboard config sensors. Add/remove Family Lists tab cards in
+# todo_lists.lists; each item becomes one card and columns controls width.
 template:
   - sensor:
+      - name: Family Dashboard Header Config
+        unique_id: family_dashboard_header_config
+        default_entity_id: sensor.family_dashboard_header_config
+        state: configured
+        variables:
+          header_config:
+            thermostat:
+              entity: climate.home_thermostat
+              title: Nest
+            weather:
+              entity: weather.nws_weather_karb
+              forecast_entity: sensor.skylight_weather_next_7_days
+        attributes:
+          config: "{{ header_config | to_json }}"
+
+      - name: Family Dashboard Invitees
+        unique_id: family_dashboard_invitees
+        default_entity_id: sensor.family_dashboard_invitees
+        state: "{{ invitees | count }}"
+        variables:
+          invitees:
+            - name: Collin
+              email: collin.moerman@gmail.com
+              default: true
+            - name: Ashley
+              email: ashley.moerman@gmail.com
+              default: true
+        attributes:
+          config: "{{ invitees | to_json }}"
+
       - name: Family Dashboard Todo Lists
         unique_id: family_dashboard_todo_lists
         default_entity_id: sensor.family_dashboard_todo_lists
@@ -88,6 +110,17 @@ template:
                 entity: todo.meijer
         attributes:
           config: "{{ todo_lists | to_json }}"
+
+automation:
+  - id: sync_calendar_event_invitees_on_start
+    alias: Sync Calendar Event Invitees On Start
+    trigger:
+      - platform: homeassistant
+        event: start
+    action:
+      - delay: "00:00:10"
+      - action: script.sync_calendar_event_invitees
+    mode: single
 
 script:
   family_calendar_visible_filter:
@@ -108,40 +141,42 @@ script:
         data:
           value: "{% if is_state('input_text.benchapp_calendar_filter', '.*') %}^${% else %}.*{% endif %}"
 
-  sync_calendar_event_invitee_defaults:
-    alias: Reset Calendar Event Invitees
+  sync_calendar_event_invitees:
+    alias: Sync Calendar Event Invitees
     sequence:
       - variables:
-          invitees: &calendar_event_invitees
-            - name: Collin
-              email: collin.moerman@gmail.com
-              entity: input_boolean.calendar_invite_collin
-              default: true
-            - name: Ashley
-              email: ashley.moerman@gmail.com
-              entity: input_boolean.calendar_invite_ashley
-              default: true
-      - repeat:
-          for_each: "{{ invitees }}"
-          sequence:
-            - choose:
-                - conditions:
-                    - condition: template
-                      value_template: "{{ repeat.item.default | bool }}"
-                  sequence:
-                    - action: input_boolean.turn_on
-                      target:
-                        entity_id: "{{ repeat.item.entity }}"
-              default:
-                - action: input_boolean.turn_off
-                  target:
-                    entity_id: "{{ repeat.item.entity }}"
+          invitees: "{{ (state_attr('sensor.family_dashboard_invitees', 'config') or '[]') | from_json }}"
+          invitee_names: >-
+            {% set ns = namespace(names=[]) %}
+            {% for invitee in invitees %}
+              {% set ns.names = ns.names + [invitee.name] %}
+            {% endfor %}
+            {{ ns.names | join(',') }}
+          default_invitee_names: >-
+            {% set ns = namespace(names=[]) %}
+            {% for invitee in invitees %}
+              {% if invitee.default | default(false) | bool %}
+                {% set ns.names = ns.names + [invitee.name] %}
+              {% endif %}
+            {% endfor %}
+            {{ ns.names | join(',') }}
+      - action: input_multiselect.set_options
+        target:
+          entity_id: input_multiselect.calendar_event_invitees
+        data:
+          options: "{{ invitee_names }}"
+      - action: input_multiselect.set_value
+        target:
+          entity_id: input_multiselect.calendar_event_invitees
+        data:
+          options: "{{ default_invitee_names }}"
 
   add_google_calendar_event:
     alias: Process Add Calendar Event
     sequence:
       - variables:
-          invitees: *calendar_event_invitees
+          invitees: "{{ (state_attr('sensor.family_dashboard_invitees', 'config') or '[]') | from_json }}"
+          selected_invitees: "{{ state_attr('input_multiselect.calendar_event_invitees', 'selected_options') or [] }}"
           calendar_map:
             Family: calendar.family
             BenchApp: calendar.benchapp_2
@@ -149,7 +184,7 @@ script:
           selected_invitee_emails: >-
             {% set ns = namespace(emails=[]) %}
             {% for invitee in invitees %}
-              {% if is_state(invitee.entity, 'on') %}
+              {% if invitee.name in selected_invitees %}
                 {% set ns.emails = ns.emails + [invitee.email] %}
               {% endif %}
             {% endfor %}
@@ -202,4 +237,4 @@ script:
           entity_id: input_text.calendar_event_location
         data:
           value: ""
-      - action: script.sync_calendar_event_invitee_defaults
+      - action: script.sync_calendar_event_invitees

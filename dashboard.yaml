@@ -8,198 +8,238 @@ views:
       # --- START HEADER SECTION (Date & Weather) ---
       - type: grid
         cards:
-          - type: custom:layout-card
-            layout_type: custom:grid-layout
-            layout:
-              margin: 0
-              padding: 0
-              card_margin: 0 2px 0 2px
-              grid-template-columns: minmax(220px, 1fr) minmax(270px, 1fr) minmax(420px, 2fr)
-              grid-template-areas: '"time current forecast"'
-              grid-template-rows: auto
-              mediaquery:
-                "(max-width: 900px)":
-                  grid-template-columns: 1fr
-                  grid-template-areas: |
-                    "time"
-                    "current"
-                    "forecast"
-            cards:
-              - type: custom:better-moment-card
-                parentStyle: |
-                  line-height: normal; padding-left: 0; padding-right: 0; margin-left: -8px; margin-right: -8px; overflow: visible;
-                moment:
-                  - parentStyle: |
-                      font-size:0.95em; text-align:center; margin-top:5px;
-                    templateRaw: |
-                      {{moment format=cccc}}
-                  - parentStyle: |
-                      font-size:1.25em; text-align:center; margin-top:5px;
-                    templateRaw: |
-                      {{moment format=LLLL dd, yyyy}}              
-                  - parentStyle: |
-                      font-size:4em; text-align:center; font-weight:400; white-space:nowrap;
-                    templateRaw: |
-                      {{moment format=h:mm a}} 
-                view_layout:
-                  grid-area: time
-                card_mod:
-                  style: |
-                    ha-card {
-                      background: transparent !important;
-                      box-shadow: none !important;
-                      border: none !important;
-                      height: 198px !important;
-                      padding-left: 0 !important;
-                      padding-right: 0 !important;
-                      overflow: visible !important;
-                    }
-              - type: custom:weather-card
-                entity: weather.nws_weather_karb
-                current: true
-                details: true
-                forecast: false
-                view_layout:
-                  grid-area: current
-                card_mod:
-                  style: |
-                    ha-card {
-                      height: 198px !important;
-                    }
-              - type: custom:button-card
-                entity: sensor.skylight_weather_next_7_days
-                show_icon: false
-                show_name: false
-                show_state: false
-                tap_action:
-                  action: more-info
-                view_layout:
-                  grid-area: forecast
-                custom_fields:
-                  forecast: |
-                    [[[ 
-                      const forecast = entity?.attributes?.forecast || [];
-                      if (!forecast.length) {
-                        return '<div class="forecast-empty">Forecast loading...</div>';
+          - type: custom:config-template-card
+            entities:
+              - sensor.family_dashboard_header_config
+            variables:
+              HEADER_CONFIG: |
+                (() => {
+                  const raw = states['sensor.family_dashboard_header_config']?.attributes?.config || '{}';
+                  try {
+                    const config = typeof raw === 'string' ? JSON.parse(raw) : raw;
+                    return config && typeof config === 'object' ? config : {};
+                  } catch (error) {
+                    console.error('Unable to parse family dashboard header config', error);
+                    return {};
+                  }
+                })()
+              THERMOSTAT_ENTITY: "vars.HEADER_CONFIG.thermostat?.entity || 'climate.home_thermostat'"
+              THERMOSTAT_TITLE: "vars.HEADER_CONFIG.thermostat?.title || 'Nest'"
+              WEATHER_ENTITY: "vars.HEADER_CONFIG.weather?.entity || 'weather.nws_weather_karb'"
+              FORECAST_ENTITY: "vars.HEADER_CONFIG.weather?.forecast_entity || 'sensor.skylight_weather_next_7_days'"
+            card:
+              type: custom:layout-card
+              layout_type: custom:grid-layout
+              layout:
+                margin: 0
+                padding: 0
+                card_margin: 0 2px 0 2px
+                grid-template-columns: repeat(4, minmax(0, 1fr))
+                grid-template-areas: '"thermostat time current forecast"'
+                grid-template-rows: auto
+                mediaquery:
+                  "(max-width: 900px)":
+                    grid-template-columns: 1fr
+                    grid-template-areas: |
+                      "thermostat"
+                      "time"
+                      "current"
+                      "forecast"
+              cards:
+                - type: custom:thermostat-card
+                  entity: ${ THERMOSTAT_ENTITY }
+                  title: ${ THERMOSTAT_TITLE }
+                  step: 1
+                  pending: 3
+                  chevron_size: 44
+                  view_layout:
+                    grid-area: thermostat
+                  card_mod:
+                    style: |
+                      ha-card {
+                        background: rgba(255, 255, 255, 0.6) !important;
+                        border-radius: 24px !important;
+                        box-shadow: none !important;
+                        border: none !important;
+                        height: 198px !important;
+                        overflow: hidden !important;
                       }
-                      const icons = {
-                        clear: 'day',
-                        'clear-night': 'night',
-                        sunny: 'day',
-                        cloudy: 'cloudy',
-                        fog: 'cloudy',
-                        hail: 'rainy-7',
-                        lightning: 'thunder',
-                        'lightning-rainy': 'thunder',
-                        partlycloudy: 'cloudy-day-3',
-                        pouring: 'rainy-6',
-                        rainy: 'rainy-5',
-                        snowy: 'snowy-6',
-                        'snowy-rainy': 'rainy-7',
-                        windy: 'cloudy',
-                        'windy-variant': 'cloudy-day-3'
-                      };
-                      const iconBase = '/local/community/weather-card/icons/';
-                      const dayFormat = new Intl.DateTimeFormat(undefined, { weekday: 'short' });
-                      const keyForDate = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
-                      const forecastsByDate = new Map(forecast.map((item) => {
-                        const date = new Date(item.datetime);
-                        return [keyForDate(date), item];
-                      }));
-                      const today = new Date();
-                      const cards = Array.from({ length: 7 }, (_, index) => {
-                        const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + index + 1);
-                        const day = dayFormat.format(date);
-                        const item = forecastsByDate.get(keyForDate(date));
-                        if (!item) {
-                          return `<div class="forecast-day forecast-day-missing"><div class="forecast-name">${day}</div><img class="forecast-icon forecast-icon-missing" src="${iconBase}cloudy.svg" alt="forecast unavailable"><div class="forecast-temp">--&deg;</div><div class="forecast-precip">unavailable</div></div>`;
-                        }
-                        const condition = item.condition || 'cloudy';
-                        const icon = icons[condition] || icons.cloudy;
-                        const temp = item.temperature === undefined || item.temperature === null ? '--' : Math.round(item.temperature);
-                        const precip = item.precipitation_probability === undefined || item.precipitation_probability === null ? '' : `<div class="forecast-precip">${Math.round(item.precipitation_probability)}% rain</div>`;
-                        return `<div class="forecast-day"><div class="forecast-name">${day}</div><img class="forecast-icon" src="${iconBase}${icon}.svg" alt="${condition}"><div class="forecast-temp">${temp}&deg;</div>${precip}</div>`;
-                      }).join('');
-                      return `<div class="forecast-grid">${cards}</div>`;
-                    ]]]
-                styles:
-                  grid:
-                    - grid-template-areas: '"forecast"'
-                    - grid-template-columns: 1fr
-                    - grid-template-rows: 1fr
-                  card:
-                    - background: rgba(255, 255, 255, 0.6)
-                    - border-radius: 24px
-                    - box-shadow: none
-                    - border: none
-                    - height: 198px
-                    - padding: 8px 10px
-                    - overflow: hidden
+                - type: custom:better-moment-card
+                  parentStyle: |
+                    line-height: normal; padding-left: 0; padding-right: 0; margin-left: -8px; margin-right: -8px; overflow: visible;
+                  moment:
+                    - parentStyle: |
+                        font-size:0.95em; text-align:center; margin-top:5px;
+                      templateRaw: |
+                        {{moment format=cccc}}
+                    - parentStyle: |
+                        font-size:1.25em; text-align:center; margin-top:5px;
+                      templateRaw: |
+                        {{moment format=LLLL dd, yyyy}}
+                    - parentStyle: |
+                        font-size:4em; text-align:center; font-weight:400; white-space:nowrap;
+                      templateRaw: |
+                        {{moment format=h:mm a}}
+                  view_layout:
+                    grid-area: time
+                  card_mod:
+                    style: |
+                      ha-card {
+                        background: transparent !important;
+                        box-shadow: none !important;
+                        border: none !important;
+                        height: 198px !important;
+                        padding-left: 0 !important;
+                        padding-right: 0 !important;
+                        overflow: visible !important;
+                      }
+                - type: custom:weather-card
+                  entity: ${ WEATHER_ENTITY }
+                  current: true
+                  details: true
+                  forecast: false
+                  view_layout:
+                    grid-area: current
+                  card_mod:
+                    style: |
+                      ha-card {
+                        height: 198px !important;
+                      }
+                - type: custom:button-card
+                  entity: ${ FORECAST_ENTITY }
+                  show_icon: false
+                  show_name: false
+                  show_state: false
+                  tap_action:
+                    action: more-info
+                  view_layout:
+                    grid-area: forecast
                   custom_fields:
-                    forecast:
-                      - width: 100%
-                      - height: 100%
-                extra_styles: |
-                  .forecast-grid {
-                    display: grid;
-                    grid-template-columns: repeat(7, minmax(0, 1fr));
-                    gap: 6px;
-                    height: 100%;
-                    align-items: stretch;
-                  }
-                  .forecast-day {
-                    display: flex;
-                    min-width: 0;
-                    flex-direction: column;
-                    align-items: center;
-                    justify-content: center;
-                    gap: 2px;
-                    padding: 4px;
-                    border-radius: 14px;
-                    background: rgba(255, 255, 255, 0.35);
-                    color: #333333;
-                    overflow: hidden;
-                  }
-                  .forecast-icon {
-                    display: block;
-                    width: 42px;
-                    height: 42px;
-                    object-fit: contain;
-                    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.18));
-                  }
-                  .forecast-icon-missing {
-                    opacity: 0.58;
-                    filter: grayscale(0.35) drop-shadow(0 1px 1px rgba(0, 0, 0, 0.14));
-                  }
-                  .forecast-name {
-                    font-weight: 700;
-                    font-size: 0.95em;
-                    line-height: 1.1;
-                  }
-                  .forecast-temp {
-                    font-weight: 700;
-                    font-size: 1.35em;
-                    line-height: 1.1;
-                  }
-                  .forecast-precip {
-                    font-size: 0.72em;
-                    line-height: 1.1;
-                    white-space: nowrap;
-                  }
-                  .forecast-day-missing {
-                    opacity: 0.62;
-                  }
-                  .forecast-empty {
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    height: 100%;
-                    color: #333333;
-                    font-size: 1.1em;
-                  }
-            grid_options:
-              columns: 120
-              rows: auto
+                    forecast: |
+                      [[[
+                        const forecast = entity?.attributes?.forecast || [];
+                        if (!forecast.length) {
+                          return '<div class="forecast-empty">Forecast loading...</div>';
+                        }
+                        const icons = {
+                          clear: 'day',
+                          'clear-night': 'night',
+                          sunny: 'day',
+                          cloudy: 'cloudy',
+                          fog: 'cloudy',
+                          hail: 'rainy-7',
+                          lightning: 'thunder',
+                          'lightning-rainy': 'thunder',
+                          partlycloudy: 'cloudy-day-3',
+                          pouring: 'rainy-6',
+                          rainy: 'rainy-5',
+                          snowy: 'snowy-6',
+                          'snowy-rainy': 'rainy-7',
+                          windy: 'cloudy',
+                          'windy-variant': 'cloudy-day-3'
+                        };
+                        const iconBase = '/local/community/weather-card/icons/';
+                        const dayFormat = new Intl.DateTimeFormat(undefined, { weekday: 'short' });
+                        const keyForDate = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                        const forecastsByDate = new Map(forecast.map((item) => {
+                          const date = new Date(item.datetime);
+                          return [keyForDate(date), item];
+                        }));
+                        const today = new Date();
+                        const cards = Array.from({ length: 7 }, (_, index) => {
+                          const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + index + 1);
+                          const day = dayFormat.format(date);
+                          const item = forecastsByDate.get(keyForDate(date));
+                          if (!item) {
+                            return `<div class="forecast-day forecast-day-missing"><div class="forecast-name">${day}</div><img class="forecast-icon forecast-icon-missing" src="${iconBase}cloudy.svg" alt="forecast unavailable"><div class="forecast-temp">--&deg;</div><div class="forecast-precip">--</div></div>`;
+                          }
+                          const condition = item.condition || 'cloudy';
+                          const icon = icons[condition] || icons.cloudy;
+                          const temp = item.temperature === undefined || item.temperature === null ? '--' : Math.round(item.temperature);
+                          const precip = item.precipitation_probability === undefined || item.precipitation_probability === null ? '' : `<div class="forecast-precip">${Math.round(item.precipitation_probability)}%</div>`;
+                          return `<div class="forecast-day"><div class="forecast-name">${day}</div><img class="forecast-icon" src="${iconBase}${icon}.svg" alt="${condition}"><div class="forecast-temp">${temp}&deg;</div>${precip}</div>`;
+                        }).join('');
+                        return `<div class="forecast-grid">${cards}</div>`;
+                      ]]]
+                  styles:
+                    grid:
+                      - grid-template-areas: '"forecast"'
+                      - grid-template-columns: 1fr
+                      - grid-template-rows: 1fr
+                    card:
+                      - background: rgba(255, 255, 255, 0.6)
+                      - border-radius: 24px
+                      - box-shadow: none
+                      - border: none
+                      - height: 198px
+                      - padding: 6px 6px
+                      - overflow: hidden
+                    custom_fields:
+                      forecast:
+                        - width: 100%
+                        - height: 100%
+                  extra_styles: |
+                    .forecast-grid {
+                      display: grid;
+                      grid-template-columns: repeat(7, minmax(0, 1fr));
+                      gap: 3px;
+                      height: 100%;
+                      align-items: stretch;
+                    }
+                    .forecast-day {
+                      display: flex;
+                      min-width: 0;
+                      flex-direction: column;
+                      align-items: center;
+                      justify-content: center;
+                      gap: 2px;
+                      padding: 2px;
+                      border-radius: 10px;
+                      background: rgba(255, 255, 255, 0.35);
+                      color: #333333;
+                      overflow: hidden;
+                    }
+                    .forecast-icon {
+                      display: block;
+                      width: 30px;
+                      height: 30px;
+                      object-fit: contain;
+                      filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.18));
+                    }
+                    .forecast-icon-missing {
+                      opacity: 0.58;
+                      filter: grayscale(0.35) drop-shadow(0 1px 1px rgba(0, 0, 0, 0.14));
+                    }
+                    .forecast-name {
+                      font-weight: 700;
+                      font-size: 0.72em;
+                      line-height: 1.05;
+                      white-space: nowrap;
+                    }
+                    .forecast-temp {
+                      font-weight: 700;
+                      font-size: 1em;
+                      line-height: 1.05;
+                    }
+                    .forecast-precip {
+                      font-size: 0.62em;
+                      line-height: 1.05;
+                      white-space: nowrap;
+                    }
+                    .forecast-day-missing {
+                      opacity: 0.62;
+                    }
+                    .forecast-empty {
+                      display: flex;
+                      align-items: center;
+                      justify-content: center;
+                      height: 100%;
+                      color: #333333;
+                      font-size: 1.1em;
+                    }
+              grid_options:
+                columns: 120
+                rows: auto
           # --- End HEADER SECTION ---
         column_span: 10
       # --- End HEADER/CONTROLS SECTION ---        
@@ -221,7 +261,7 @@ views:
               stacked: false
             tabs:
               - attributes:
-                  label: Family Calendar
+                  label: Calendar
                   icon: mdi:calendar-month
                 styles:
                   flex: "1 1 50%"
@@ -588,7 +628,7 @@ views:
                                 }
                               }
               - attributes:
-                  label: Family Lists
+                  label: Lists
                   icon: mdi:format-list-checks
                 styles:
                   flex: "1 1 50%"
@@ -711,6 +751,8 @@ views:
               }
             cards:
               - type: entities
+                title: Add Calendar Event
+                state_color: false
                 entities:
                   - entity: input_select.calendar_select
                   - entity: input_text.calendar_event_title
@@ -723,12 +765,23 @@ views:
                     name: All Day Event
                   - type: section
                     label: Invitees
-                  - entity: input_boolean.calendar_invite_collin
-                    name: Invite Collin
-                  - entity: input_boolean.calendar_invite_ashley
-                    name: Invite Ashley
-                title: Add Calendar Event
-                state_color: false
+              - type: custom:input-multiselect-card
+                entity: input_multiselect.calendar_event_invitees
+                name: Invitees
+                icon: mdi:account-multiple-plus
+                auto_submit: true
+                show_chips: true
+                show_search: false
+                corner_radius: 16px
+                icon_color: snow
+                icon_bg_color: "#393745"
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: rgba(255, 255, 255, 0.6) !important;
+                      border: none !important;
+                      box-shadow: none !important;
+                    }
               - type: conditional
                 conditions:
                   - entity: input_boolean.calendar_all_day_event
