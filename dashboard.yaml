@@ -196,7 +196,7 @@ views:
                         };
                         const iconBase = '/local/community/weather-card/icons/';
                         const dayFormat = new Intl.DateTimeFormat(undefined, { weekday: 'short' });
-                        const keyForDate = (date) => `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+                        const keyForDate = (date) => date.getFullYear() + '-' + String(date.getMonth() + 1).padStart(2, '0') + '-' + String(date.getDate()).padStart(2, '0');
                         const forecastsByDate = new Map(forecast.map((item) => {
                           const date = new Date(item.datetime);
                           return [keyForDate(date), item];
@@ -207,15 +207,15 @@ views:
                           const day = dayFormat.format(date);
                           const item = forecastsByDate.get(keyForDate(date));
                           if (!item) {
-                            return `<div class="forecast-day forecast-day-missing"><div class="forecast-name">${day}</div><img class="forecast-icon forecast-icon-missing" src="${iconBase}cloudy.svg" alt="forecast unavailable"><div class="forecast-temp">--&deg;</div><div class="forecast-precip">--</div></div>`;
+                            return '<div class="forecast-day forecast-day-missing"><div class="forecast-name">' + day + '</div><img class="forecast-icon forecast-icon-missing" src="' + iconBase + 'cloudy.svg" alt="forecast unavailable"><div class="forecast-temp">--&deg;</div><div class="forecast-precip">--</div></div>';
                           }
                           const condition = item.condition || 'cloudy';
                           const icon = icons[condition] || icons.cloudy;
                           const temp = item.temperature === undefined || item.temperature === null ? '--' : Math.round(item.temperature);
-                          const precip = item.precipitation_probability === undefined || item.precipitation_probability === null ? '' : `<div class="forecast-precip">${Math.round(item.precipitation_probability)}%</div>`;
-                          return `<div class="forecast-day"><div class="forecast-name">${day}</div><img class="forecast-icon" src="${iconBase}${icon}.svg" alt="${condition}"><div class="forecast-temp">${temp}&deg;</div>${precip}</div>`;
+                          const precip = item.precipitation_probability === undefined || item.precipitation_probability === null ? '' : '<div class="forecast-precip">' + Math.round(item.precipitation_probability) + '%</div>';
+                          return '<div class="forecast-day"><div class="forecast-name">' + day + '</div><img class="forecast-icon" src="' + iconBase + icon + '.svg" alt="' + condition + '"><div class="forecast-temp">' + temp + '&deg;</div>' + precip + '</div>';
                         }).join('');
-                        return `<div class="forecast-grid">${cards}</div>`;
+                        return '<div class="forecast-grid">' + cards + '</div>';
                       ]]]
                   styles:
                     grid:
