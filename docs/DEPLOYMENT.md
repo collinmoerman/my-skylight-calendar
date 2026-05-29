@@ -9,7 +9,7 @@ helpers. Treat those as one deployment unit.
 
 Pin these refs when rebuilding or releasing the deployment:
 
-- `home-assistant-core`: `collinmoerman/home-assistant-core`, branch `event-colors`.
+- `home-assistant-core`: `collinmoerman/home-assistant-core`, branch `event-colors-2026.5.4` for production HA 2026.5.4 images. The `event-colors` branch tracks the same changes on upstream dev.
 - `home-assistant-frontend`: `collinmoerman/home-assistant-frontend`, branch `event-colors-2026.5.4`, commit `92c818e4fae6f749d84b93508c436491f618b372` for the HA 2026.5.x custom package.
 - `gcal_sync`: `collinmoerman/gcal_sync`, commit `5599ea017309f0abd1f0806480df6fc20d13cf92`.
 - `week-planner-card`: `collinmoerman/week-planner-card`, branch `event-colors`, commit `206dd593da6cb0ad7bc82e4298b1d781f4dec449`.

@@ -165,7 +165,7 @@ The custom `week-planner-card` build is especially important. If HACS updates it
 
 For Google event colors to survive updates, Portainer should run a custom Home Assistant image, not the stock image. The image should include:
 
-* `home-assistant-core` from the `event-colors` fork.
+* `home-assistant-core` from the `event-colors-2026.5.4` fork branch.
 * `gcal_sync` pinned to the commit listed in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 * `home-assistant-frontend` from the `event-colors-2026.5.4` package fork listed in [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md).
 
