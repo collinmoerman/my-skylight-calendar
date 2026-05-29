@@ -8,52 +8,50 @@ views:
       # --- START HEADER SECTION (Date & Weather) ---
       - type: grid
         cards:
-          - type: custom:config-template-card
-            entities:
-              - sensor.family_dashboard_header_config
-            variables:
-              HEADER_CONFIG: |
-                (() => {
-                  const raw = states['sensor.family_dashboard_header_config']?.attributes?.config || '{}';
-                  try {
-                    const config = typeof raw === 'string' ? JSON.parse(raw) : raw;
-                    return config && typeof config === 'object' ? config : {};
-                  } catch (error) {
-                    console.error('Unable to parse family dashboard header config', error);
-                    return {};
-                  }
-                })()
-              THERMOSTAT_ENTITY: "vars.HEADER_CONFIG.thermostat?.entity || 'climate.home_thermostat'"
-              THERMOSTAT_TITLE: "vars.HEADER_CONFIG.thermostat?.title || 'Nest'"
-              WEATHER_ENTITY: "vars.HEADER_CONFIG.weather?.entity || 'weather.nws_weather_karb'"
-              FORECAST_ENTITY: "vars.HEADER_CONFIG.weather?.forecast_entity || 'sensor.skylight_weather_next_7_days'"
-            card:
-              type: custom:layout-card
-              layout_type: custom:grid-layout
-              layout:
-                margin: 0
-                padding: 0
-                card_margin: 0 2px 0 2px
-                grid-template-columns: repeat(4, minmax(0, 1fr))
-                grid-template-areas: '"thermostat time current forecast"'
-                grid-template-rows: auto
-                mediaquery:
-                  "(max-width: 900px)":
-                    grid-template-columns: 1fr
-                    grid-template-areas: |
-                      "thermostat"
-                      "time"
-                      "current"
-                      "forecast"
-              cards:
-                - type: custom:thermostat-card
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
+            layout:
+              margin: 0
+              padding: 0
+              card_margin: 0 2px 0 2px
+              grid-template-columns: repeat(4, minmax(0, 1fr))
+              grid-template-areas: '"thermostat time current forecast"'
+              grid-template-rows: auto
+              mediaquery:
+                "(max-width: 900px)":
+                  grid-template-columns: 1fr
+                  grid-template-areas: |
+                    "thermostat"
+                    "time"
+                    "current"
+                    "forecast"
+            cards:
+              - type: custom:config-template-card
+                entities:
+                  - sensor.family_dashboard_header_config
+                variables:
+                  HEADER_CONFIG: |
+                    (() => {
+                      const raw = states['sensor.family_dashboard_header_config']?.attributes?.config || '{}';
+                      try {
+                        const config = typeof raw === 'string' ? JSON.parse(raw) : raw;
+                        return config && typeof config === 'object' ? config : {};
+                      } catch (error) {
+                        console.error('Unable to parse family dashboard header config', error);
+                        return {};
+                      }
+                    })()
+                  THERMOSTAT_ENTITY: "vars.HEADER_CONFIG.thermostat?.entity || 'climate.home_thermostat'"
+                  THERMOSTAT_TITLE: "vars.HEADER_CONFIG.thermostat?.title || 'Nest'"
+                view_layout:
+                  grid-area: thermostat
+                card:
+                  type: custom:thermostat-card
                   entity: ${ THERMOSTAT_ENTITY }
                   title: ${ THERMOSTAT_TITLE }
                   step: 1
                   pending: 3
                   chevron_size: 44
-                  view_layout:
-                    grid-area: thermostat
                   card_mod:
                     style: |
                       ha-card {
@@ -64,56 +62,90 @@ views:
                         height: 198px !important;
                         overflow: hidden !important;
                       }
-                - type: custom:better-moment-card
-                  parentStyle: |
-                    line-height: normal; padding-left: 0; padding-right: 0; margin-left: -8px; margin-right: -8px; overflow: visible;
-                  moment:
-                    - parentStyle: |
-                        font-size:0.95em; text-align:center; margin-top:5px;
-                      templateRaw: |
-                        {{moment format=cccc}}
-                    - parentStyle: |
-                        font-size:1.25em; text-align:center; margin-top:5px;
-                      templateRaw: |
-                        {{moment format=LLLL dd, yyyy}}
-                    - parentStyle: |
-                        font-size:4em; text-align:center; font-weight:400; white-space:nowrap;
-                      templateRaw: |
-                        {{moment format=h:mm a}}
-                  view_layout:
-                    grid-area: time
-                  card_mod:
-                    style: |
-                      ha-card {
-                        background: transparent !important;
-                        box-shadow: none !important;
-                        border: none !important;
-                        height: 198px !important;
-                        padding-left: 0 !important;
-                        padding-right: 0 !important;
-                        overflow: visible !important;
+              - type: custom:better-moment-card
+                parentStyle: |
+                  line-height: normal; padding-left: 0; padding-right: 0; margin-left: -8px; margin-right: -8px; overflow: visible;
+                moment:
+                  - parentStyle: |
+                      font-size:0.95em; text-align:center; margin-top:5px;
+                    templateRaw: |
+                      {{moment format=cccc}}
+                  - parentStyle: |
+                      font-size:1.25em; text-align:center; margin-top:5px;
+                    templateRaw: |
+                      {{moment format=LLLL dd, yyyy}}
+                  - parentStyle: |
+                      font-size:4em; text-align:center; font-weight:400; white-space:nowrap;
+                    templateRaw: |
+                      {{moment format=h:mm a}}
+                view_layout:
+                  grid-area: time
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: transparent !important;
+                      box-shadow: none !important;
+                      border: none !important;
+                      height: 198px !important;
+                      padding-left: 0 !important;
+                      padding-right: 0 !important;
+                      overflow: visible !important;
+                    }
+              - type: custom:config-template-card
+                entities:
+                  - sensor.family_dashboard_header_config
+                variables:
+                  HEADER_CONFIG: |
+                    (() => {
+                      const raw = states['sensor.family_dashboard_header_config']?.attributes?.config || '{}';
+                      try {
+                        const config = typeof raw === 'string' ? JSON.parse(raw) : raw;
+                        return config && typeof config === 'object' ? config : {};
+                      } catch (error) {
+                        console.error('Unable to parse family dashboard header config', error);
+                        return {};
                       }
-                - type: custom:weather-card
+                    })()
+                  WEATHER_ENTITY: "vars.HEADER_CONFIG.weather?.entity || 'weather.nws_weather_karb'"
+                view_layout:
+                  grid-area: current
+                card:
+                  type: custom:weather-card
                   entity: ${ WEATHER_ENTITY }
                   current: true
                   details: true
                   forecast: false
-                  view_layout:
-                    grid-area: current
                   card_mod:
                     style: |
                       ha-card {
                         height: 198px !important;
                       }
-                - type: custom:button-card
+              - type: custom:config-template-card
+                entities:
+                  - sensor.family_dashboard_header_config
+                variables:
+                  HEADER_CONFIG: |
+                    (() => {
+                      const raw = states['sensor.family_dashboard_header_config']?.attributes?.config || '{}';
+                      try {
+                        const config = typeof raw === 'string' ? JSON.parse(raw) : raw;
+                        return config && typeof config === 'object' ? config : {};
+                      } catch (error) {
+                        console.error('Unable to parse family dashboard header config', error);
+                        return {};
+                      }
+                    })()
+                  FORECAST_ENTITY: "vars.HEADER_CONFIG.weather?.forecast_entity || 'sensor.skylight_weather_next_7_days'"
+                view_layout:
+                  grid-area: forecast
+                card:
+                  type: custom:button-card
                   entity: ${ FORECAST_ENTITY }
                   show_icon: false
                   show_name: false
                   show_state: false
                   tap_action:
                     action: more-info
-                  view_layout:
-                    grid-area: forecast
                   custom_fields:
                     forecast: |
                       [[[
@@ -237,9 +269,9 @@ views:
                       color: #333333;
                       font-size: 1.1em;
                     }
-              grid_options:
-                columns: 120
-                rows: auto
+            grid_options:
+              columns: 120
+              rows: auto
           # --- End HEADER SECTION ---
         column_span: 10
       # --- End HEADER/CONTROLS SECTION ---        
@@ -412,7 +444,8 @@ views:
                           style: |
                               /* === BASE SAFETY === */
                               :host {
-                                overflow: hidden;
+                                display: block;
+                                overflow: visible;
                               }
                       
                               /* === CARD BASE === */
@@ -420,8 +453,10 @@ views:
                                 background: rgba(255, 255, 255, 0.6) !important;
                                 border-radius: 24px !important;
                                 box-shadow: none !important;
-                                height: clamp(480px, 70vh, 900px) !important;
-                                max-height: clamp(480px, 70vh, 900px) !important;
+                                min-height: clamp(480px, 70vh, 900px) !important;
+                                height: auto !important;
+                                max-height: none !important;
+                                overflow: visible !important;
                               }
                       
                               /* === GRID LAYOUT === */
@@ -430,6 +465,9 @@ views:
                                 grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
                                 grid-auto-flow: row dense !important;
                                 gap: 0 !important;
+                                height: auto !important;
+                                max-height: none !important;
+                                overflow: visible !important;
                               }
                       
                               .container .navigation,
