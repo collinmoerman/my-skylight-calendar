@@ -39,6 +39,8 @@ The example Portainer stack is in `deploy/home-assistant-stack.example.yml`.
 Do not point Portainer back to the stock image unless losing Google event color
 support is acceptable.
 
+Docker Hub image digest: `sha256:c52d5e1e5f0f5f79b0ebfd8d2381706cd9c20f5badc388a5ab3b49a32f328cd8`.
+
 ## HA config files
 
 Copy these files into `/config`:

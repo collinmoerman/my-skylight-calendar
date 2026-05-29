@@ -2,7 +2,7 @@
 # Replace the image tag with the pushed image produced from the core fork.
 services:
   homeassistant:
-    image: ghcr.io/collinmoerman/home-assistant:event-colors-2026.5.4
+    image: collinmoerman/home-assistant:event-colors-2026.5.4
     container_name: homeassistant
     network_mode: host
     environment:
