@@ -213,15 +213,16 @@ views:
                   .bubble-button-card-container { padding-top: 2px !important; padding-bottom: 2px !important; }
                   .bubble-button-background {
                     opacity: 1 !important;
-                    background-color: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Calendar' ? 'var(--family-default-primary-color)' : 'rgba(255, 255, 255, 0.6)'} !important;
+                    background-color: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Calendar' ? 'snow' : 'rgba(230, 230, 230, 0.85)'} !important;
                   }
                   .bubble-icon-container {
-                    background-color: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Calendar' ? '#333333' : 'snow'} !important;
+                    background-color: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Calendar' ? 'rgba(230, 230, 230, 0.85)' : 'snow'} !important;
                   }
                   .bubble-name, .bubble-icon {
-                    color: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Calendar' ? 'snow' : '#333333'} !important;
+                    color: #111111 !important;
                     opacity: 1 !important;
                     line-height: 1.05 !important;
+                    font-weight: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Calendar' ? '700' : '300'} !important;
                   }
               - type: custom:bubble-card
                 card_type: button
@@ -244,15 +245,16 @@ views:
                   .bubble-button-card-container { padding-top: 2px !important; padding-bottom: 2px !important; }
                   .bubble-button-background {
                     opacity: 1 !important;
-                    background-color: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Lists' ? 'var(--family-default-primary-color)' : 'rgba(255, 255, 255, 0.6)'} !important;
+                    background-color: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Lists' ? 'snow' : 'rgba(230, 230, 230, 0.85)'} !important;
                   }
                   .bubble-icon-container {
-                    background-color: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Lists' ? '#333333' : 'snow'} !important;
+                    background-color: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Lists' ? 'rgba(230, 230, 230, 0.85)' : 'snow'} !important;
                   }
                   .bubble-name, .bubble-icon {
-                    color: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Lists' ? 'snow' : '#333333'} !important;
+                    color: #111111 !important;
                     opacity: 1 !important;
                     line-height: 1.05 !important;
+                    font-weight: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Lists' ? '700' : '300'} !important;
                   }
             grid_options:
               columns: 120
