@@ -376,6 +376,7 @@ views:
                   })()
               card:
                 type: custom:week-planner-card
+                useEventColors: true
                 calendars:
                   # --- MAP CALENDARS HERE ---
                   - entity: calendar.family
