@@ -180,5 +180,3 @@ script:
         data:
           value: ""
       - action: script.sync_calendar_event_invitee_defaults
-      - action: browser_mod.close_popup
-        data: {}

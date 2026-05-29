@@ -754,8 +754,15 @@ views:
               - type: custom:button-card
                 name: Add Event to Calendar
                 tap_action:
-                  action: call-service
-                  service: script.add_google_calendar_event
+                  action: fire-dom-event
+                  browser_mod:
+                    service: browser_mod.sequence
+                    data:
+                      sequence:
+                        - service: script.add_google_calendar_event
+                        - service: browser_mod.navigate
+                          data:
+                            path: /skylight-calendar/family-calendar
                 styles:
                   card:
                     - background-color: |
