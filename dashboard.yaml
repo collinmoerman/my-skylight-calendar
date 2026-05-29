@@ -14,7 +14,7 @@ views:
               margin: 0
               padding: 0
               card_margin: 0 6px 0 6px
-              grid-template-columns: minmax(180px, 16fr) minmax(270px, 28fr) minmax(500px, 76fr)
+              grid-template-columns: minmax(220px, 1fr) minmax(270px, 1fr) minmax(420px, 2fr)
               grid-template-areas: '"time current forecast"'
               grid-template-rows: auto
               mediaquery:
@@ -259,86 +259,77 @@ views:
             grid_options:
               columns: 120
               rows: auto
-          - type: custom:bubble-card
-            card_type: button
-            button_type: name
-            name: Family
-            icon: mdi:human-male-female-child
-            show_icon: true
-            show_name: true
-            tap_action:
-              action: perform-action
-              perform_action: script.family_calendar_visible_filter
-            button_action:
-              tap_action:
-                action: perform-action
-                perform_action: script.family_calendar_visible_filter
-            styles: |
-              ha-card, .bubble-button-card-container { cursor: pointer !important; }
-              .bubble-button-background {
-                opacity: 1 !important;
-                background-color: ${hass.states['input_text.family_calendar_filter'].state === '.*' ? 'light-grey' : 'var(--family-default-primary-color)'} !important;
-              }
+          - type: custom:layout-card
+            layout_type: custom:grid-layout
+            layout:
+              margin: 0
+              padding: 0
+              card_margin: 0 6px
+              grid-template-columns: minmax(210px, 260px) minmax(290px, 360px) 1fr minmax(160px, 220px)
+              grid-template-areas: '"view calendars spacer add"'
+              grid-template-rows: auto
+              mediaquery:
+                "(max-width: 900px)":
+                  grid-template-columns: 1fr
+                  grid-template-areas: |
+                    "view"
+                    "calendars"
+                    "add"
+            cards:
+              - type: custom:bubble-card
+                card_type: select
+                entity: input_select.calendar_view
+                show_name: true
+                show_state: true
+                name: Select View
+                show_last_changed: false
+                show_attribute: false
+                view_layout:
+                  grid-area: view
+              - type: custom:input-multiselect-card
+                entity: input_multiselect.calendar_selection
+                name: Select Calendar(s)
+                icon: mdi:calendar-multiple-check
+                auto_submit: true
+                show_chips: true
+                show_search: false
+                corner_radius: 24px
+                icon_color: snow
+                icon_bg_color: "#393745"
+                view_layout:
+                  grid-area: calendars
+                card_mod:
+                  style: |
+                    ha-card {
+                      background: rgba(255, 255, 255, 0.6) !important;
+                      border: none !important;
+                      box-shadow: none !important;
+                    }
+              - type: custom:bubble-card
+                card_type: button
+                button_type: name
+                card_layout: large
+                name: Add Event
+                icon: mdi:calendar-plus
+                tap_action:
+                  action: navigate
+                  navigation_path: "#addcalendarevent"
+                button_action:
+                  tap_action:
+                    action: navigate
+                    navigation_path: "#addcalendarevent"
+                styles: |
+                  ha-card, .bubble-button-card-container { cursor: pointer !important; }
+                  * { font-size: 1.05em !important; }
+                  ha-card { --bubble-main-background-color: #393745 !important; }
+                  .bubble-icon { --mdc-icon-size: 30px !important; color: snow !important; opacity: 1; }
+                  .bubble-icon-container { background: #393745 !important; display: flex; }
+                  .bubble-name { color: snow !important; opacity: 1; display: flex; line-height: 18px; flex-direction: row; justify-content: center; flex-grow: 1; margin: 0 40px 0 0; pointer-events: none; position: relative; overflow: hidden; }
+                view_layout:
+                  grid-area: add
             grid_options:
-              columns: 10
-              rows: 1
-          - type: custom:bubble-card
-            card_type: button
-            button_type: name
-            name: BenchApp
-            icon: mdi:calendar-star
-            show_icon: true
-            show_name: true
-            tap_action:
-              action: perform-action
-              perform_action: script.benchapp_calendar_visible_filter
-            button_action:
-              tap_action:
-                action: perform-action
-                perform_action: script.benchapp_calendar_visible_filter
-            styles: |
-              ha-card, .bubble-button-card-container { cursor: pointer !important; }
-              .bubble-button-background {
-                opacity: 1 !important;
-                background-color: ${hass.states['input_text.benchapp_calendar_filter'].state === '.*' ? 'light-grey' : 'var(--benchapp-default-primary-color)'} !important;
-              }
-            grid_options:
-              columns: 10
-              rows: 1
-          - type: custom:bubble-card
-            card_type: button
-            button_type: name
-            card_layout: large
-            name: Add Event
-            icon: mdi:calendar-plus
-            tap_action:
-              action: navigate
-              navigation_path: "#addcalendarevent"
-            button_action:
-              tap_action:
-                action: navigate
-                navigation_path: "#addcalendarevent"
-            styles: |
-              ha-card, .bubble-button-card-container { cursor: pointer !important; }
-              * { font-size: 1.05em !important; }
-              ha-card { --bubble-main-background-color: #393745 !important; }
-              .bubble-icon { --mdc-icon-size: 30px !important; color: snow !important; opacity: 1; }
-              .bubble-icon-container { background: #393745 !important; display: flex; }
-              .bubble-name { color: snow !important; opacity: 1; display: flex; line-height: 18px; flex-direction: row; justify-content: center; flex-grow: 1; margin: 0 40px 0 0; pointer-events: none; position: relative; overflow: hidden; }
-            grid_options:
-              columns: 10
-              rows: 1
-          - type: custom:bubble-card
-            card_type: select
-            entity: input_select.calendar_view
-            show_name: true
-            show_state: true
-            name: Select View
-            show_last_changed: false
-            show_attribute: false
-            grid_options:
-              columns: 10
-              rows: 1
+              columns: 120
+              rows: auto
         column_span: 10
       # --- End HEADER/CONTROLS SECTION ---        
       # --- START CALENDAR SECTION (Week Planner Card) ---
@@ -351,12 +342,19 @@ views:
             card:
               type: custom:config-template-card
               entities:
-                - input_text.family_calendar_filter
-                - input_text.benchapp_calendar_filter
+                - input_multiselect.calendar_selection
                 - input_select.calendar_view
               variables:
-                FAMCAL: states['input_text.family_calendar_filter']?.state
-                BENCHAPPCAL: states['input_text.benchapp_calendar_filter']?.state
+                FAMCAL: |
+                  (() => {
+                    const selected = states['input_multiselect.calendar_selection']?.attributes?.selected_options || [];
+                    return selected.includes('Family') ? '^$' : '.*';
+                  })()
+                BENCHAPPCAL: |
+                  (() => {
+                    const selected = states['input_multiselect.calendar_selection']?.attributes?.selected_options || [];
+                    return selected.includes('BenchApp') ? '^$' : '.*';
+                  })()
                 VIEW: states['input_select.calendar_view']?.state
                 STARTDAY: |
                   (() => {
@@ -462,8 +460,8 @@ views:
   
                       /* === YOUR ORIGINAL VISUAL RULES === */
                       .event.past {
-                        opacity: .2 !important;
-                        background-color: gray !important;
+                        opacity: .72 !important;
+                        filter: saturate(0.75) brightness(0.95) !important;
                       }
   
                       .time {
@@ -472,9 +470,9 @@ views:
                       }
   
                       .event {
-                        color: #333333 !important;
+                        color: var(--event-text-color, #333333) !important;
                         line-height: 16px !important;
-                        background-color: var(--border-color) !important;
+                        background-color: var(--event-background-color, var(--border-color)) !important;
                         border-radius: 10px !important;
                         max-height: 80px !important;
                         overflow: hidden !important;
