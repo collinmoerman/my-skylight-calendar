@@ -10,7 +10,7 @@ helpers. Treat those as one deployment unit.
 Pin these refs when rebuilding or releasing the deployment:
 
 - `home-assistant-core`: `collinmoerman/home-assistant-core`, branch `event-colors-2026.5.4` for production HA 2026.5.4 images. The `event-colors` branch tracks the same changes on upstream dev.
-- `home-assistant-frontend`: `collinmoerman/home-assistant-frontend`, branch `event-colors-2026.5.4`, commit `92c818e4fae6f749d84b93508c436491f618b372` for the HA 2026.5.x custom package.
+- `home-assistant-frontend`: `collinmoerman/home-assistant-frontend`, branch `event-colors-2026.5.4`, commit `a76cc68925228fa25c4d06a5023f9ea008f9bbbc` for the HA 2026.5.x custom package.
 - `gcal_sync`: `collinmoerman/gcal_sync`, commit `5599ea017309f0abd1f0806480df6fc20d13cf92`.
 - `week-planner-card`: `collinmoerman/week-planner-card`, branch `event-colors`, commit `206dd593da6cb0ad7bc82e4298b1d781f4dec449`.
 
@@ -39,7 +39,7 @@ The example Portainer stack is in `deploy/home-assistant-stack.example.yml`.
 Do not point Portainer back to the stock image unless losing Google event color
 support is acceptable.
 
-Docker Hub image digest: `sha256:c52d5e1e5f0f5f79b0ebfd8d2381706cd9c20f5badc388a5ab3b49a32f328cd8`.
+Docker Hub image digest: `sha256:b4fc5e1b54385635581e0694d22a0c6d7078adca27cc70854ddd729a2973e4cf`.
 
 ## HA config files
 
