@@ -200,497 +200,435 @@ views:
             grid_options:
               columns: 120
               rows: auto
-          # --- START CONTROLS SECTION (Buttons) ---
-          - type: horizontal-stack
-            cards:
-              - type: custom:bubble-card
-                card_type: button
-                button_type: name
-                name: Family Calendar
-                icon: mdi:calendar-month
-                show_icon: true
-                show_name: true
-                tap_action:
-                  action: perform-action
-                  perform_action: script.show_family_calendar_panel
-                button_action:
-                  tap_action:
-                    action: perform-action
-                    perform_action: script.show_family_calendar_panel
-                styles: |
-                  * { font-size: 1.18em !important; }
-                  .bubble-icon { --mdc-icon-size: 34px !important; }
-                  ha-card, .bubble-button-card-container { cursor: pointer !important; }
-                  .bubble-button-card-container { padding-top: 2px !important; padding-bottom: 2px !important; }
-                  .bubble-button-background {
-                    opacity: 1 !important;
-                    background-color: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Calendar' ? 'snow' : 'rgba(230, 230, 230, 0.85)'} !important;
-                  }
-                  .bubble-icon-container {
-                    background-color: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Calendar' ? 'rgba(230, 230, 230, 0.85)' : 'snow'} !important;
-                  }
-                  .bubble-name, .bubble-icon {
-                    color: #111111 !important;
-                    opacity: 1 !important;
-                    line-height: 1.05 !important;
-                    font-weight: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Calendar' ? '700' : '300'} !important;
-                  }
-              - type: custom:bubble-card
-                card_type: button
-                button_type: name
-                name: Family Lists
-                icon: mdi:format-list-checks
-                show_icon: true
-                show_name: true
-                tap_action:
-                  action: perform-action
-                  perform_action: script.show_family_lists_panel
-                button_action:
-                  tap_action:
-                    action: perform-action
-                    perform_action: script.show_family_lists_panel
-                styles: |
-                  * { font-size: 1.18em !important; }
-                  .bubble-icon { --mdc-icon-size: 34px !important; }
-                  ha-card, .bubble-button-card-container { cursor: pointer !important; }
-                  .bubble-button-card-container { padding-top: 2px !important; padding-bottom: 2px !important; }
-                  .bubble-button-background {
-                    opacity: 1 !important;
-                    background-color: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Lists' ? 'snow' : 'rgba(230, 230, 230, 0.85)'} !important;
-                  }
-                  .bubble-icon-container {
-                    background-color: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Lists' ? 'rgba(230, 230, 230, 0.85)' : 'snow'} !important;
-                  }
-                  .bubble-name, .bubble-icon {
-                    color: #111111 !important;
-                    opacity: 1 !important;
-                    line-height: 1.05 !important;
-                    font-weight: ${hass.states['input_select.skylight_dashboard_panel']?.state === 'Lists' ? '700' : '300'} !important;
-                  }
-            grid_options:
-              columns: 120
-              rows: auto
-          - type: custom:layout-card
-            layout_type: custom:grid-layout
-            layout:
-              margin: 0
-              padding: 0
-              card_margin: 0 6px
-              grid-template-columns: repeat(4, minmax(0, 1fr))
-              grid-template-areas: '"view calendars spacer add"'
-              grid-template-rows: auto
-              mediaquery:
-                "(max-width: 900px)":
-                  grid-template-columns: 1fr
-                  grid-template-areas: |
-                    "view"
-                    "calendars"
-                    "add"
-            cards:
-              - type: custom:bubble-card
-                card_type: select
-                entity: input_select.calendar_view
-                show_name: true
-                show_state: true
-                name: Select View
-                show_last_changed: false
-                show_attribute: false
-                styles: |
-                  ha-card, .bubble-select-card-container { min-height: 66px !important; height: 66px !important; }
-                view_layout:
-                  grid-area: view
-              - type: custom:input-multiselect-card
-                entity: input_multiselect.calendar_selection
-                name: Select Calendar(s)
-                icon: mdi:calendar-multiple-check
-                auto_submit: true
-                show_chips: false
-                show_search: false
-                corner_radius: 24px
-                icon_color: snow
-                icon_bg_color: "#393745"
-                view_layout:
-                  grid-area: calendars
-                card_mod:
-                  style: |
-                    ha-card {
-                      background: rgba(255, 255, 255, 0.6) !important;
-                      border: none !important;
-                      box-shadow: none !important;
-                      min-height: 66px !important;
-                      box-sizing: border-box !important;
-                    }
-              - type: custom:bubble-card
-                card_type: button
-                button_type: name
-                card_layout: large
-                name: Add Event
-                icon: mdi:calendar-plus
-                tap_action:
-                  action: navigate
-                  navigation_path: "#addcalendarevent"
-                button_action:
-                  tap_action:
-                    action: navigate
-                    navigation_path: "#addcalendarevent"
-                styles: |
-                  ha-card, .bubble-button-card-container { cursor: pointer !important; min-height: 66px !important; height: 66px !important; }
-                  * { font-size: 1.05em !important; }
-                  ha-card { --bubble-main-background-color: #393745 !important; }
-                  .bubble-icon { --mdc-icon-size: 30px !important; color: snow !important; opacity: 1; }
-                  .bubble-icon-container { background: #393745 !important; display: flex; }
-                  .bubble-name { color: snow !important; opacity: 1; display: flex; line-height: 18px; flex-direction: row; justify-content: center; flex-grow: 1; margin: 0 40px 0 0; pointer-events: none; position: relative; overflow: hidden; }
-                view_layout:
-                  grid-area: add
-            grid_options:
-              columns: 120
-              rows: auto
+          # --- End HEADER SECTION ---
         column_span: 10
       # --- End HEADER/CONTROLS SECTION ---        
-      # --- START CALENDAR SECTION (Week Planner Card) ---
+      # --- START TABBED CONTENT SECTION ---
       - type: grid
         cards:
-          - type: conditional
-            conditions:
-              - entity: input_select.skylight_dashboard_panel
-                state: Calendar
-            card:
-              type: custom:config-template-card
-              entities:
-                - input_multiselect.calendar_selection
-                - input_select.calendar_view
-              variables:
-                FAMCAL: |
-                  (() => {
-                    const selected = states['input_multiselect.calendar_selection']?.attributes?.selected_options || [];
-                    return selected.includes('Family') ? '^$' : '.*';
-                  })()
-                BENCHAPPCAL: |
-                  (() => {
-                    const selected = states['input_multiselect.calendar_selection']?.attributes?.selected_options || [];
-                    return selected.includes('BenchApp') ? '^$' : '.*';
-                  })()
-                VIEW: states['input_select.calendar_view']?.state
-                STARTDAY: |
-                  (() => {
-                    const calendarView = states['input_select.calendar_view']?.state;
-                    if (calendarView === 'Today') return 'today';
-                    if (calendarView === 'Tomorrow') return 'tomorrow';
-                    return 'monday';
-                  })()
-                DAYS: |
-                  (() => {
-                    const calendarView = states['input_select.calendar_view']?.state;
-                    if (calendarView === 'Today') return 1;
-                    if (calendarView === 'Tomorrow') return 2;
-                    if (calendarView === 'Week') return 7;
-                    if (calendarView === 'Biweek') return 14;
-                    if (calendarView === '4-week') return 28;
-                    return "month";
-                  })()
-              card:
-                type: custom:week-planner-card
-                useEventColors: true
-                calendars:
-                  # --- MAP CALENDARS HERE ---
-                  - entity: calendar.family
-                    name: Family
-                    color: "var(--family-default-primary-color)"
-                    filter: ${ FAMCAL }
-                  - entity: calendar.benchapp_2
-                    name: BenchApp
-                    color: "var(--benchapp-default-primary-color)"
-                    filter: ${ BENCHAPPCAL }
-                days: ${ DAYS }
-                startingDay: ${ STARTDAY }
-                showNavigation: true
-                showWeekDayText: false # <--- Requires week-planner-card v1.13.0 or higher
-                startingDayOffset: 0
-                hideWeekend: false
-                noCardBackground: false
-                compact: false
-                locale: en
-                texts:
-                  noEvents: ""
-                showLocation: true
-                hidePastEvents: false
-                hideDaysWithoutEvents: false
-                hideTodayWithoutEvents: false
-                combineSimilarEvents: true
-                showLegend: false
-                legendToggle: false
-                card_mod:
-                  style: |
-                      /* === BASE SAFETY === */
-                      :host {
-                        overflow: hidden;
-                      }
-  
-                      /* === CARD BASE === */
-                      ha-card {
-                        background: rgba(255, 255, 255, 0.6) !important;
-                        border-radius: 24px !important;
-                        box-shadow: none !important;
-                        height: clamp(480px, 70vh, 900px) !important;
-                        max-height: clamp(480px, 70vh, 900px) !important;
-                      }
-  
-                      /* === GRID LAYOUT === */
-                      .container {
-                        display: grid !important;
-                        grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
-                        grid-auto-flow: row dense !important;
-                        gap: 0 !important;
-                      }
-  
-                      .container .navigation,
-                      .container .header {
-                        grid-column: 1 / -1 !important;
-                      }
-  
-                      /* WEEKDAY LABEL CELLS */
-                      .day.header {
-                        display: block !important;
-                        grid-column: auto !important;
-                        margin: 0 !important;
-                        padding: 0.2em !important;
-                        text-align: center !important;
-                        box-sizing: border-box !important;
-                      }
-  
-                      .day.header .date .text {
-                        font-weight: 600 !important;
-                      }
-  
-                      /* === DAY TILES === */
-                      .day {
-                        border: solid 1px whitesmoke !important;
-                        padding: 0.2% !important;
-                        width: auto !important;
-                        min-width: 0 !important;
-                        margin: 0 !important;
-                        box-sizing: border-box !important;
-                        align-self: stretch !important;
-                        justify-self: stretch !important;
-                      }
-  
-                      /* === YOUR ORIGINAL VISUAL RULES === */
-                      .event.past {
-                        opacity: .64 !important;
-                        filter: saturate(0.6) brightness(0.92) !important;
-                      }
-  
-                      .time {
-                        color: #333333 !important;
-                        font-size: 0.8em !important;
-                      }
-  
-                      .event {
-                        color: var(--event-text-color, #333333) !important;
-                        line-height: 16px !important;
-                        background-color: var(--event-background-color, var(--border-color)) !important;
-                        border-radius: 10px !important;
-                        max-height: 80px !important;
-                        overflow: hidden !important;
-                        font-size: 1.1em !important;
-                      }
-  
-                      .none {
-                        background-color: transparent !important;
-                      }
-  
-                      .today .number {
-                        border-radius: 5px !important;
-                        background-color: orange !important;
-                        padding-left: 4px !important;
-                        padding-right: 4px !important;
-                      }
-  
-                      .day .date .text {
-                        font-size: 1em !important;
-                        font-weight: bold !important;
-                      }
-  
-                      .day .date .number {
-                        font-weight: bold !important;
-                        font-size: 3em !important;
-                      }
-  
-                      /* Weekday colors */
+          - type: custom:tabbed-card
+            options:
+              defaultTabIndex: 0
+            styles:
+              --mdc-theme-primary: "#111111"
+              --mdc-tab-text-label-color-default: "rgba(17, 17, 17, 0.58)"
+              --mdc-tab-color-default: "rgba(17, 17, 17, 0.58)"
+              --mdc-typography-button-font-size: 20px
+              --mdc-tab-height: 58px
+            attributes:
+              isFadingIndicator: false
+              isMinWidthIndicator: false
+              stacked: false
+            tabs:
+              - attributes:
+                  label: Family Calendar
+                  icon: mdi:calendar-month
+                styles:
+                  flex: "1 1 50%"
+                  max-width: none
+                card:
+                  type: vertical-stack
+                  cards:
+                    - type: custom:layout-card
+                      layout_type: custom:grid-layout
+                      layout:
+                        margin: 0
+                        padding: 0
+                        card_margin: 0 6px
+                        grid-template-columns: repeat(4, minmax(0, 1fr))
+                        grid-template-areas: '"view calendars spacer add"'
+                        grid-template-rows: auto
+                        mediaquery:
+                          "(max-width: 900px)":
+                            grid-template-columns: 1fr
+                            grid-template-areas: |
+                              "view"
+                              "calendars"
+                              "add"
+                      cards:
+                        - type: custom:bubble-card
+                          card_type: select
+                          entity: input_select.calendar_view
+                          show_name: true
+                          show_state: true
+                          name: Select View
+                          show_last_changed: false
+                          show_attribute: false
+                          styles: |
+                            ha-card, .bubble-select-card-container { min-height: 66px !important; height: 66px !important; }
+                          view_layout:
+                            grid-area: view
+                        - type: custom:input-multiselect-card
+                          entity: input_multiselect.calendar_selection
+                          name: Select Calendar(s)
+                          icon: mdi:calendar-multiple-check
+                          auto_submit: true
+                          show_chips: false
+                          show_search: false
+                          corner_radius: 24px
+                          icon_color: snow
+                          icon_bg_color: "#393745"
+                          view_layout:
+                            grid-area: calendars
+                          card_mod:
+                            style: |
+                              ha-card {
+                                background: rgba(255, 255, 255, 0.6) !important;
+                                border: none !important;
+                                box-shadow: none !important;
+                                min-height: 66px !important;
+                                box-sizing: border-box !important;
+                              }
+                        - type: custom:bubble-card
+                          card_type: button
+                          button_type: name
+                          card_layout: large
+                          name: Add Event
+                          icon: mdi:calendar-plus
+                          tap_action:
+                            action: navigate
+                            navigation_path: "#addcalendarevent"
+                          button_action:
+                            tap_action:
+                              action: navigate
+                              navigation_path: "#addcalendarevent"
+                          styles: |
+                            ha-card, .bubble-button-card-container { cursor: pointer !important; min-height: 66px !important; height: 66px !important; }
+                            * { font-size: 1.05em !important; }
+                            ha-card { --bubble-main-background-color: #393745 !important; }
+                            .bubble-icon { --mdc-icon-size: 30px !important; color: snow !important; opacity: 1; }
+                            .bubble-icon-container { background: #393745 !important; display: flex; }
+                            .bubble-name { color: snow !important; opacity: 1; display: flex; line-height: 18px; flex-direction: row; justify-content: center; flex-grow: 1; margin: 0 40px 0 0; pointer-events: none; position: relative; overflow: hidden; }
+                          view_layout:
+                            grid-area: add
+                      grid_options:
+                        columns: 120
+                        rows: auto
+                    - type: custom:config-template-card
+                      entities:
+                        - input_multiselect.calendar_selection
+                        - input_select.calendar_view
+                      variables:
+                        FAMCAL: |
+                          (() => {
+                            const selected = states['input_multiselect.calendar_selection']?.attributes?.selected_options || [];
+                            return selected.includes('Family') ? '^$' : '.*';
+                          })()
+                        BENCHAPPCAL: |
+                          (() => {
+                            const selected = states['input_multiselect.calendar_selection']?.attributes?.selected_options || [];
+                            return selected.includes('BenchApp') ? '^$' : '.*';
+                          })()
+                        VIEW: states['input_select.calendar_view']?.state
+                        STARTDAY: |
+                          (() => {
+                            const calendarView = states['input_select.calendar_view']?.state;
+                            if (calendarView === 'Today') return 'today';
+                            if (calendarView === 'Tomorrow') return 'tomorrow';
+                            return 'monday';
+                          })()
+                        DAYS: |
+                          (() => {
+                            const calendarView = states['input_select.calendar_view']?.state;
+                            if (calendarView === 'Today') return 1;
+                            if (calendarView === 'Tomorrow') return 2;
+                            if (calendarView === 'Week') return 7;
+                            if (calendarView === 'Biweek') return 14;
+                            if (calendarView === '4-week') return 28;
+                            return "month";
+                          })()
+                      card:
+                        type: custom:week-planner-card
+                        useEventColors: true
+                        calendars:
+                          # --- MAP CALENDARS HERE ---
+                          - entity: calendar.family
+                            name: Family
+                            color: "var(--family-default-primary-color)"
+                            filter: ${ FAMCAL }
+                          - entity: calendar.benchapp_2
+                            name: BenchApp
+                            color: "var(--benchapp-default-primary-color)"
+                            filter: ${ BENCHAPPCAL }
+                        days: ${ DAYS }
+                        startingDay: ${ STARTDAY }
+                        showNavigation: true
+                        showWeekDayText: false # <--- Requires week-planner-card v1.13.0 or higher
+                        startingDayOffset: 0
+                        hideWeekend: false
+                        noCardBackground: false
+                        compact: false
+                        locale: en
+                        texts:
+                          noEvents: ""
+                        showLocation: true
+                        hidePastEvents: false
+                        hideDaysWithoutEvents: false
+                        hideTodayWithoutEvents: false
+                        combineSimilarEvents: true
+                        showLegend: false
+                        legendToggle: false
+                        card_mod:
+                          style: |
+                              /* === BASE SAFETY === */
+                              :host {
+                                overflow: hidden;
+                              }
                       
-                      /* When showWeekDayText is true */
-                      .day[data-weekday="1"] .date .text,
-                      .day[data-weekday="2"] .date .text,
-                      .day[data-weekday="3"] .date .text,
-                      .day[data-weekday="4"] .date .text,
-                      .day[data-weekday="5"] .date .text {
-                        color: #2e7d32 !important;
-                      }
-  
-                      .day[data-weekday="6"] .date .text,
-                      .day[data-weekday="7"] .date .text {
-                        color: #d32f2f !important;
-                      }
-                      /* When showWeekDayText is false */
-                      .container > .day.header .text {
-                        color: #2e7d32 !important;
-                      }
-                      /* Saturday = column 7 */
-                      .container > .day.header:nth-of-type(7) .text {
-                        color: #d32f2f !important;
-                      }
-                      /* Sunday = column 8 */
-                      .container > .day.header:nth-of-type(8) .text {
-                        color: #d32f2f !important;
-                      }
-  
-  
-                      /* === RESPONSIVE BREAKPOINTS === */
-                      @media (max-width: 1024px) {
-                        .day .date .number { font-size: 2em !important; }
-                        .day .date .text   { font-size: 0.95em !important; }
-                      }
-  
-                      @media (max-width: 768px) {
-                        .day .date .number { font-size: 1.6em !important; }
-                        .day .date .text   { font-size: 0.85em !important; }
-                        .event { font-size: 0.85em !important; line-height: 1.1em !important; }
-                        .time  { font-size: 0.75em !important; }
-                      }
-  
-                      /* ========================================================= */
-                      /* === MOBILE OVERLAP FIX + TWO‑LINE WRAP FOR TITLES ======== */
-                      /* ========================================================= */
-                      @media (max-width: 480px) {
-  
-                        :host {
-                          font-size: clamp(10px, 2.6vw, 13px) !important;
-                        }
-  
-                        /* Condensed headers */
-                        .container .header,
-                        .container .navigation {
-                          padding: 0.25em 0.4em !important;
-                        }
-  
-                        /* Day tiles tighter */
-                        .day {
-                          padding: 0.15em !important;
-                          min-width: 0 !important;
-                        }
-  
-                        /* Smaller date numbers */
-                        .day .date .number {
-                          font-size: clamp(1.1em, 4.5vw, 1.4em) !important;
-                          line-height: 1.1 !important;
-                        }
-                        .day .date .text {
-                          font-size: clamp(0.72em, 3.2vw, 0.85em) !important;
-                          line-height: 1.1 !important;
-                        }
-  
-                        /* Event chip reduced */
-                        .event {
-                          font-size: clamp(0.72em, 2.9vw, 0.85em) !important;
-                          line-height: 1.05em !important;
-                          padding: 0.25em 0.35em !important;
-                          max-height: 62px !important;
-                        }
-  
-                        .time {
-                          font-size: clamp(0.65em, 2.5vw, 0.78em) !important;
-                        }
-  
-                        /* === TWO-LINE WRAP FOR TITLES === */
-                        .event .title,
-                        .event .name,
-                        .event .summary,
-                        .event .location,
-                        .event .desc,
-                        .event .description {
-                          display: -webkit-box !important;
-                          -webkit-box-orient: vertical !important;
-                          -webkit-line-clamp: 2 !important;   /* <<< Two lines max */
-                          overflow: hidden !important;
-                          text-overflow: ellipsis !important;
-                          white-space: normal !important;
-                          line-height: 1.1em !important;
-                          max-height: calc(1.1em * 2) !important;
-                        }
-                      }
-  
-                      /* Slightly larger phones / small tablets */
-                      @media (min-width: 481px) and (max-width: 768px) {
-  
-                        :host {
-                          font-size: clamp(11px, 2.2vw, 14px) !important;
-                        }
-  
-                        .event {
-                          max-height: 72px !important;
-                        }
-  
-                        .event .title,
-                        .event .name,
-                        .event .summary {
-                          display: -webkit-box !important;
-                          -webkit-line-clamp: 2 !important;
-                          overflow: hidden !important;
-                        }
-                      }
-              grid_options:
-                columns: 120
-                rows: 1
-                showDescription: false
-            grid_options:
-              columns: 120
-              rows: 1
-              showDescription: false
-        column_span: 10
-      # --- End CALENDAR SECTION (Week Planner Card) ---
-      # --- START LISTS SECTION (OurGroceries) ---
-      - type: grid
-        cards:
-          - type: conditional
-            conditions:
-              - entity: input_select.skylight_dashboard_panel
-                state: Lists
-            card:
-              type: grid
-              columns: 2
-              square: false
-              cards:
-                - type: todo-list
-                  title: Meals
-                  entity: todo.meals
-                  hide_completed: true
-                  hide_section_headers: true
-                  item_tap_action: edit
-                  card_mod:
-                    style: |
-                      ha-card {
-                        background: rgba(255, 255, 255, 0.6) !important;
-                        border-radius: 24px !important;
-                        box-shadow: none !important;
-                      }
-                - type: todo-list
-                  title: Meijer
-                  entity: todo.meijer
-                  hide_completed: true
-                  hide_section_headers: true
-                  item_tap_action: edit
-                  card_mod:
-                    style: |
-                      ha-card {
-                        background: rgba(255, 255, 255, 0.6) !important;
-                        border-radius: 24px !important;
-                        box-shadow: none !important;
-                      }
+                              /* === CARD BASE === */
+                              ha-card {
+                                background: rgba(255, 255, 255, 0.6) !important;
+                                border-radius: 24px !important;
+                                box-shadow: none !important;
+                                height: clamp(480px, 70vh, 900px) !important;
+                                max-height: clamp(480px, 70vh, 900px) !important;
+                              }
+                      
+                              /* === GRID LAYOUT === */
+                              .container {
+                                display: grid !important;
+                                grid-template-columns: repeat(7, minmax(0, 1fr)) !important;
+                                grid-auto-flow: row dense !important;
+                                gap: 0 !important;
+                              }
+                      
+                              .container .navigation,
+                              .container .header {
+                                grid-column: 1 / -1 !important;
+                              }
+                      
+                              /* WEEKDAY LABEL CELLS */
+                              .day.header {
+                                display: block !important;
+                                grid-column: auto !important;
+                                margin: 0 !important;
+                                padding: 0.2em !important;
+                                text-align: center !important;
+                                box-sizing: border-box !important;
+                              }
+                      
+                              .day.header .date .text {
+                                font-weight: 600 !important;
+                              }
+                      
+                              /* === DAY TILES === */
+                              .day {
+                                border: solid 1px whitesmoke !important;
+                                padding: 0.2% !important;
+                                width: auto !important;
+                                min-width: 0 !important;
+                                margin: 0 !important;
+                                box-sizing: border-box !important;
+                                align-self: stretch !important;
+                                justify-self: stretch !important;
+                              }
+                      
+                              /* === YOUR ORIGINAL VISUAL RULES === */
+                              .event.past {
+                                opacity: .64 !important;
+                                filter: saturate(0.6) brightness(0.92) !important;
+                              }
+                      
+                              .time {
+                                color: #333333 !important;
+                                font-size: 0.8em !important;
+                              }
+                      
+                              .event {
+                                color: var(--event-text-color, #333333) !important;
+                                line-height: 16px !important;
+                                background-color: var(--event-background-color, var(--border-color)) !important;
+                                border-radius: 10px !important;
+                                max-height: 80px !important;
+                                overflow: hidden !important;
+                                font-size: 1.1em !important;
+                              }
+                      
+                              .none {
+                                background-color: transparent !important;
+                              }
+                      
+                              .today .number {
+                                border-radius: 5px !important;
+                                background-color: orange !important;
+                                padding-left: 4px !important;
+                                padding-right: 4px !important;
+                              }
+                      
+                              .day .date .text {
+                                font-size: 1em !important;
+                                font-weight: bold !important;
+                              }
+                      
+                              .day .date .number {
+                                font-weight: bold !important;
+                                font-size: 3em !important;
+                              }
+                      
+                              /* Weekday colors */
+                              
+                              /* When showWeekDayText is true */
+                              .day[data-weekday="1"] .date .text,
+                              .day[data-weekday="2"] .date .text,
+                              .day[data-weekday="3"] .date .text,
+                              .day[data-weekday="4"] .date .text,
+                              .day[data-weekday="5"] .date .text {
+                                color: #2e7d32 !important;
+                              }
+                      
+                              .day[data-weekday="6"] .date .text,
+                              .day[data-weekday="7"] .date .text {
+                                color: #d32f2f !important;
+                              }
+                              /* When showWeekDayText is false */
+                              .container > .day.header .text {
+                                color: #2e7d32 !important;
+                              }
+                              /* Saturday = column 7 */
+                              .container > .day.header:nth-of-type(7) .text {
+                                color: #d32f2f !important;
+                              }
+                              /* Sunday = column 8 */
+                              .container > .day.header:nth-of-type(8) .text {
+                                color: #d32f2f !important;
+                              }
+                      
+                      
+                              /* === RESPONSIVE BREAKPOINTS === */
+                              @media (max-width: 1024px) {
+                                .day .date .number { font-size: 2em !important; }
+                                .day .date .text   { font-size: 0.95em !important; }
+                              }
+                      
+                              @media (max-width: 768px) {
+                                .day .date .number { font-size: 1.6em !important; }
+                                .day .date .text   { font-size: 0.85em !important; }
+                                .event { font-size: 0.85em !important; line-height: 1.1em !important; }
+                                .time  { font-size: 0.75em !important; }
+                              }
+                      
+                              /* ========================================================= */
+                              /* === MOBILE OVERLAP FIX + TWO‑LINE WRAP FOR TITLES ======== */
+                              /* ========================================================= */
+                              @media (max-width: 480px) {
+                      
+                                :host {
+                                  font-size: clamp(10px, 2.6vw, 13px) !important;
+                                }
+                      
+                                /* Condensed headers */
+                                .container .header,
+                                .container .navigation {
+                                  padding: 0.25em 0.4em !important;
+                                }
+                      
+                                /* Day tiles tighter */
+                                .day {
+                                  padding: 0.15em !important;
+                                  min-width: 0 !important;
+                                }
+                      
+                                /* Smaller date numbers */
+                                .day .date .number {
+                                  font-size: clamp(1.1em, 4.5vw, 1.4em) !important;
+                                  line-height: 1.1 !important;
+                                }
+                                .day .date .text {
+                                  font-size: clamp(0.72em, 3.2vw, 0.85em) !important;
+                                  line-height: 1.1 !important;
+                                }
+                      
+                                /* Event chip reduced */
+                                .event {
+                                  font-size: clamp(0.72em, 2.9vw, 0.85em) !important;
+                                  line-height: 1.05em !important;
+                                  padding: 0.25em 0.35em !important;
+                                  max-height: 62px !important;
+                                }
+                      
+                                .time {
+                                  font-size: clamp(0.65em, 2.5vw, 0.78em) !important;
+                                }
+                      
+                                /* === TWO-LINE WRAP FOR TITLES === */
+                                .event .title,
+                                .event .name,
+                                .event .summary,
+                                .event .location,
+                                .event .desc,
+                                .event .description {
+                                  display: -webkit-box !important;
+                                  -webkit-box-orient: vertical !important;
+                                  -webkit-line-clamp: 2 !important;   /* <<< Two lines max */
+                                  overflow: hidden !important;
+                                  text-overflow: ellipsis !important;
+                                  white-space: normal !important;
+                                  line-height: 1.1em !important;
+                                  max-height: calc(1.1em * 2) !important;
+                                }
+                              }
+                      
+                              /* Slightly larger phones / small tablets */
+                              @media (min-width: 481px) and (max-width: 768px) {
+                      
+                                :host {
+                                  font-size: clamp(11px, 2.2vw, 14px) !important;
+                                }
+                      
+                                .event {
+                                  max-height: 72px !important;
+                                }
+                      
+                                .event .title,
+                                .event .name,
+                                .event .summary {
+                                  display: -webkit-box !important;
+                                  -webkit-line-clamp: 2 !important;
+                                  overflow: hidden !important;
+                                }
+                              }
+              - attributes:
+                  label: Family Lists
+                  icon: mdi:format-list-checks
+                styles:
+                  flex: "1 1 50%"
+                  max-width: none
+                card:
+                  type: grid
+                  columns: 2
+                  square: false
+                  cards:
+                    - type: todo-list
+                      title: Meals
+                      entity: todo.meals
+                      hide_completed: true
+                      hide_section_headers: true
+                      item_tap_action: edit
+                      card_mod:
+                        style: |
+                          ha-card {
+                            background: rgba(255, 255, 255, 0.6) !important;
+                            border-radius: 24px !important;
+                            box-shadow: none !important;
+                          }
+                    - type: todo-list
+                      title: Meijer
+                      entity: todo.meijer
+                      hide_completed: true
+                      hide_section_headers: true
+                      item_tap_action: edit
+                      card_mod:
+                        style: |
+                          ha-card {
+                            background: rgba(255, 255, 255, 0.6) !important;
+                            border-radius: 24px !important;
+                            box-shadow: none !important;
+                          }
             grid_options:
               columns: 120
               rows: auto
         column_span: 10
-      # --- End LISTS SECTION (OurGroceries) ---
+      # --- End TABBED CONTENT SECTION ---
       # --- START POPUP SECTION (Hidden) ---
       - type: grid
         cards:
