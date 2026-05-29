@@ -40,6 +40,7 @@ input_select:
       - Tomorrow
       - Week
       - Biweek
+      - 4-week
       - Month
     initial: Month
 

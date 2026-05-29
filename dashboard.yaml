@@ -13,7 +13,7 @@ views:
             layout:
               margin: 0
               padding: 0
-              card_margin: 0 6px 0 6px
+              card_margin: 0 2px 0 2px
               grid-template-columns: minmax(220px, 1fr) minmax(270px, 1fr) minmax(420px, 2fr)
               grid-template-areas: '"time current forecast"'
               grid-template-rows: auto
@@ -27,7 +27,7 @@ views:
             cards:
               - type: custom:better-moment-card
                 parentStyle: |
-                  line-height:normal;
+                  line-height: normal; padding-left: 0; padding-right: 0; margin-left: -8px; margin-right: -8px; overflow: visible;
                 moment:
                   - parentStyle: |
                       font-size:0.95em; text-align:center; margin-top:5px;
@@ -38,7 +38,7 @@ views:
                     templateRaw: |
                       {{moment format=LLLL dd, yyyy}}              
                   - parentStyle: |
-                      font-size:4em; text-align:center; font-weight:400;
+                      font-size:4em; text-align:center; font-weight:400; white-space:nowrap;
                     templateRaw: |
                       {{moment format=h:mm A}} 
                 view_layout:
@@ -50,6 +50,9 @@ views:
                       box-shadow: none !important;
                       border: none !important;
                       height: 198px !important;
+                      padding-left: 0 !important;
+                      padding-right: 0 !important;
+                      overflow: visible !important;
                     }
               - type: custom:weather-card
                 entity: weather.nws_weather_karb
@@ -265,7 +268,7 @@ views:
               margin: 0
               padding: 0
               card_margin: 0 6px
-              grid-template-columns: minmax(210px, 260px) minmax(290px, 360px) 1fr minmax(160px, 220px)
+              grid-template-columns: repeat(4, minmax(0, 1fr))
               grid-template-areas: '"view calendars spacer add"'
               grid-template-rows: auto
               mediaquery:
@@ -284,6 +287,8 @@ views:
                 name: Select View
                 show_last_changed: false
                 show_attribute: false
+                styles: |
+                  ha-card, .bubble-select-card-container { min-height: 66px !important; height: 66px !important; }
                 view_layout:
                   grid-area: view
               - type: custom:input-multiselect-card
@@ -291,7 +296,7 @@ views:
                 name: Select Calendar(s)
                 icon: mdi:calendar-multiple-check
                 auto_submit: true
-                show_chips: true
+                show_chips: false
                 show_search: false
                 corner_radius: 24px
                 icon_color: snow
@@ -304,6 +309,8 @@ views:
                       background: rgba(255, 255, 255, 0.6) !important;
                       border: none !important;
                       box-shadow: none !important;
+                      min-height: 66px !important;
+                      box-sizing: border-box !important;
                     }
               - type: custom:bubble-card
                 card_type: button
@@ -319,7 +326,7 @@ views:
                     action: navigate
                     navigation_path: "#addcalendarevent"
                 styles: |
-                  ha-card, .bubble-button-card-container { cursor: pointer !important; }
+                  ha-card, .bubble-button-card-container { cursor: pointer !important; min-height: 66px !important; height: 66px !important; }
                   * { font-size: 1.05em !important; }
                   ha-card { --bubble-main-background-color: #393745 !important; }
                   .bubble-icon { --mdc-icon-size: 30px !important; color: snow !important; opacity: 1; }
@@ -370,6 +377,7 @@ views:
                     if (calendarView === 'Tomorrow') return 2;
                     if (calendarView === 'Week') return 7;
                     if (calendarView === 'Biweek') return 14;
+                    if (calendarView === '4-week') return 28;
                     return "month";
                   })()
               card:
@@ -460,8 +468,8 @@ views:
   
                       /* === YOUR ORIGINAL VISUAL RULES === */
                       .event.past {
-                        opacity: .72 !important;
-                        filter: saturate(0.75) brightness(0.95) !important;
+                        opacity: .64 !important;
+                        filter: saturate(0.6) brightness(0.92) !important;
                       }
   
                       .time {
