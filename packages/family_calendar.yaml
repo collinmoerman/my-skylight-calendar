@@ -105,7 +105,7 @@ script:
       - variables:
           calendar_map:
             Family: calendar.family
-            BenchApp: calendar.benchapp
+            BenchApp: calendar.benchapp_2
           target_calendar: "{{ calendar_map.get(states('input_select.calendar_select'), 'calendar.family') }}"
 
       - choose:

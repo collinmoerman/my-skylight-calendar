@@ -383,7 +383,7 @@ views:
                     name: Family
                     color: "var(--family-default-primary-color)"
                     filter: ${ FAMCAL }
-                  - entity: calendar.benchapp
+                  - entity: calendar.benchapp_2
                     name: BenchApp
                     color: "var(--benchapp-default-primary-color)"
                     filter: ${ BENCHAPPCAL }
