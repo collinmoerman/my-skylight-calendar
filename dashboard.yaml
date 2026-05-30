@@ -1,12 +1,3 @@
-kiosk_mode:
-  user_settings:
-    - users:
-        - Skylight
-      hide_header: true
-      hide_sidebar: true
-      hide_menubutton: true
-      hide_overflow: true
-
 views:
   - type: sections
     max_columns: 10
